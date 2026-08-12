@@ -7,3 +7,6 @@ dist/
 .pytest_cache/
 .coverage
 *.mp4
+
+# Gerado pelo PyInstaller a cada empacotamento
+Contaflux.spec

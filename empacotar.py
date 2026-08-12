@@ -13,7 +13,7 @@ que não tem lugar numa suíte que precisa rodar a cada alteração.
 
 from __future__ import annotations
 
-import shutil
+import importlib.util
 import subprocess
 import sys
 from pathlib import Path
@@ -23,16 +23,22 @@ ENTRADA = RAIZ / 'src' / 'contaflux' / '__main__.py'
 
 
 def construir() -> int:
-    if shutil.which('pyinstaller') is None:
+    # A chamada é pelo próprio interpretador, e não pelo comando `pyinstaller`
+    # do PATH. Num ambiente virtual do Windows, a pasta Scripts costuma não
+    # estar no PATH do shell, e procurar o comando falharia mesmo com o
+    # PyInstaller instalado ali do lado.
+    if importlib.util.find_spec('PyInstaller') is None:
         print(
             'PyInstaller não encontrado. Instale com:\n'
-            '    pip install pyinstaller',
+            f'    {sys.executable} -m pip install pyinstaller',
             file=sys.stderr,
         )
         return 1
 
     comando = [
-        'pyinstaller',
+        sys.executable,
+        '-m',
+        'PyInstaller',
         '--onefile',
         '--name',
         'Contaflux',
