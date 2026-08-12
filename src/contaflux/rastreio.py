@@ -27,9 +27,19 @@ class Alvo:
     centro: tuple[float, float]
     caixa: tuple[int, int, int, int]
     trajetoria: list[tuple[float, float]] = field(default_factory=list)
+    indices: list[int] = field(default_factory=list)
+    """Em que quadro cada ponto da trajetória foi visto.
+
+    Guardado separadamente porque a trajetória tem buracos: quando o objeto
+    passa atrás de outro, ele some por alguns quadros e volta. Supor que os
+    pontos são consecutivos faria a estimativa de velocidade errar exatamente
+    nos casos em que ela mais importa, que são os de trânsito carregado.
+    """
+
     sumido_ha: int = 0
     contado: bool = False
     quadros_visto: int = 1
+    area: int = 0
 
     @property
     def deslocamento(self) -> tuple[float, float]:
@@ -66,11 +76,11 @@ class Rastreador:
         self.alvos: dict[int, Alvo] = {}
         self._proximo_id = 1
 
-    def atualizar(self, deteccoes: list[Deteccao]) -> dict[int, Alvo]:
+    def atualizar(self, deteccoes: list[Deteccao], indice: int = 0) -> dict[int, Alvo]:
         """Consome as detecções de um quadro e devolve os alvos vivos."""
         if not self.alvos:
             for deteccao in deteccoes:
-                self._criar(deteccao)
+                self._criar(deteccao, indice)
             return self.alvos
 
         ids = list(self.alvos)
@@ -109,33 +119,43 @@ class Rastreador:
             i, j = candidata
             usados_alvos.add(i)
             usadas_deteccoes.add(j)
-            self._mover(self.alvos[ids[i]], deteccoes[j])
+            self._mover(self.alvos[ids[i]], deteccoes[j], indice)
 
         for j, deteccao in enumerate(deteccoes):
             if j not in usadas_deteccoes:
-                self._criar(deteccao)
+                self._criar(deteccao, indice)
 
         self._envelhecer({ids[i] for i in usados_alvos})
         return self.alvos
 
-    def _criar(self, deteccao: Deteccao) -> None:
+    def _criar(self, deteccao: Deteccao, indice: int = 0) -> None:
         alvo = Alvo(
             identificador=self._proximo_id,
             centro=deteccao.centro,
             caixa=deteccao.como_tupla(),
             trajetoria=[deteccao.centro],
+            indices=[indice],
+            area=deteccao.area,
         )
         self.alvos[self._proximo_id] = alvo
         self._proximo_id += 1
 
-    def _mover(self, alvo: Alvo, deteccao: Deteccao) -> None:
+    def _mover(self, alvo: Alvo, deteccao: Deteccao, indice: int = 0) -> None:
         alvo.centro = deteccao.centro
         alvo.caixa = deteccao.como_tupla()
         alvo.trajetoria.append(deteccao.centro)
+        alvo.indices.append(indice)
         if len(alvo.trajetoria) > self.historico_trajetoria:
             alvo.trajetoria.pop(0)
+            alvo.indices.pop(0)
         alvo.sumido_ha = 0
         alvo.quadros_visto += 1
+        # A área mediana ao longo da vida é mais estável que a de um quadro só,
+        # e é o que a classificação por porte usa. Guardar a maior vista serve
+        # ao mesmo fim sem precisar manter a lista inteira: o objeto aparece
+        # recortado ao entrar e ao sair do quadro, e é no meio que ele tem o
+        # tamanho verdadeiro.
+        alvo.area = max(alvo.area, deteccao.area)
 
     def _envelhecer(self, atualizados: set[int]) -> None:
         for identificador in list(self.alvos):
