@@ -1,0 +1,67 @@
+"""Gera o executável de janela única com o PyInstaller.
+
+    python empacotar.py
+
+O resultado fica em `dist/Contaflux.exe` no Windows e em `dist/Contaflux` no
+Linux e no macOS. Ele não precisa de Python instalado na máquina de destino, que
+é o ponto: o professor abre o arquivo e o programa roda.
+
+O empacotamento não entra na suíte de testes de propósito. Ele leva minutos,
+depende do sistema operacional e produz um arquivo de mais de cem megabytes, o
+que não tem lugar numa suíte que precisa rodar a cada alteração.
+"""
+
+from __future__ import annotations
+
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+RAIZ = Path(__file__).parent
+ENTRADA = RAIZ / 'src' / 'contaflux' / '__main__.py'
+
+
+def construir() -> int:
+    if shutil.which('pyinstaller') is None:
+        print(
+            'PyInstaller não encontrado. Instale com:\n'
+            '    pip install pyinstaller',
+            file=sys.stderr,
+        )
+        return 1
+
+    comando = [
+        'pyinstaller',
+        '--onefile',
+        '--name',
+        'Contaflux',
+        '--paths',
+        str(RAIZ / 'src'),
+        # O OpenCV carrega parte dos seus módulos em tempo de execução, e o
+        # PyInstaller não consegue enxergar isso analisando os imports. Sem a
+        # inclusão explícita, o executável monta e falha ao abrir.
+        '--hidden-import',
+        'cv2',
+        '--collect-submodules',
+        'contaflux',
+        '--noconfirm',
+        str(ENTRADA),
+    ]
+
+    print('Empacotando. Isso leva alguns minutos.\n')
+    resultado = subprocess.run(comando, cwd=RAIZ)
+    if resultado.returncode != 0:
+        return resultado.returncode
+
+    destino = RAIZ / 'dist'
+    gerados = list(destino.glob('Contaflux*'))
+    print('\nPronto:')
+    for arquivo in gerados:
+        tamanho = arquivo.stat().st_size / 1_000_000
+        print(f'  {arquivo}  ({tamanho:.0f} MB)')
+    return 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(construir())
