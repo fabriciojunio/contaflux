@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "contaflux"
 version = "1.0.0"
-description = "Conta veículos e pessoas que cruzam uma linha em vídeo"
+description = "Conta veículos que cruzam uma linha em vídeo de câmera fixa"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
@@ -24,12 +24,25 @@ where = ["src"]
 testpaths = ["tests"]
 pythonpath = ["src"]
 addopts = "-q"
-markers = ["lento: testes que processam vídeo inteiro"]
+markers = ["lento: processa uma cena inteira de vídeo, quadro a quadro"]
 
 [tool.coverage.run]
 source = ["src/contaflux"]
 branch = true
+omit = [
+    # Empacotamento, e não código do sistema: leva minutos, depende do sistema
+    # operacional e produz um arquivo de mais de cem megabytes.
+    "*/empacotar.py",
+]
 
 [tool.coverage.report]
-fail_under = 80
+fail_under = 85
 show_missing = true
+exclude_lines = [
+    "pragma: sem cobertura",
+    "if __name__ == .__main__.:",
+    # A janela ao vivo depende de servidor gráfico e de alguém apertando tecla.
+    # Testar isso exigiria simular o ambiente de janela inteiro, e o que ela faz
+    # de fato, que é anotar o quadro, é testado em test_desenho.py.
+    "if mostrar:",
+]
