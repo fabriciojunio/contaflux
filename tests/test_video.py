@@ -143,13 +143,91 @@ def test_cada_backend_tem_nome_legivel():
     assert all(isinstance(nome, str) and nome for nome, _ in BACKENDS_DE_CAMERA)
 
 
-def test_camera_inexistente_explica_o_que_tentou():
-    """Mensagem genérica aqui deixa a pessoa sem saber se é permissão ou hardware."""
+class CapturaFalsa:
+    """Substitui a captura do OpenCV para testar a cascata sem hardware.
+
+    A primeira versão destes testes abria a câmera de verdade num índice alto,
+    esperando falhar. Foi um erro caro: sondar dispositivo inexistente no
+    Windows chega a travar por vários minutos, e uma execução da suíte inteira
+    ficou meia hora parada num único teste. Além disso o resultado dependeria de
+    quantas câmeras a máquina tem, o que é o oposto de teste.
+    """
+
+    def __init__(self, abre: bool, entrega_quadro: bool) -> None:
+        self._abre = abre
+        self._entrega = entrega_quadro
+        self.liberada = False
+
+    def isOpened(self):  # noqa: N802 - o nome é o da API do OpenCV
+        return self._abre
+
+    def read(self):
+        if not self._entrega:
+            return False, None
+        return True, np.zeros((240, 320, 3), dtype=np.uint8)
+
+    def release(self):
+        self.liberada = True
+
+    def get(self, _propriedade):
+        return 0.0
+
+
+def instalar_capturas(monkeypatch, comportamentos):
+    """Faz cada abertura de captura devolver o próximo comportamento da lista."""
+    criadas = []
+
+    def fabricar(_origem, _backend=None):
+        abre, entrega = comportamentos[len(criadas)]
+        captura = CapturaFalsa(abre, entrega)
+        criadas.append(captura)
+        return captura
+
+    monkeypatch.setattr('contaflux.video.cv2.VideoCapture', fabricar)
+    monkeypatch.setattr('contaflux.video.sys.platform', 'win32')
+    return criadas
+
+
+def test_camera_que_nao_abre_em_nenhum_backend_explica_o_que_tentou(monkeypatch):
+    """Mensagem genérica deixa a pessoa sem saber se é permissão ou hardware."""
+    instalar_capturas(monkeypatch, [(False, False)] * 3)
+
     with pytest.raises(FonteIndisponivel) as erro:
-        FonteDeVideo('97')
+        FonteDeVideo('0')
+
     mensagem = str(erro.value)
-    assert 'câmera 97' in mensagem
+    assert 'câmera 0' in mensagem
     assert 'Tentativas' in mensagem
+    for nome, _ in BACKENDS_DE_CAMERA:
+        assert nome in mensagem
+
+
+def test_backend_que_abre_mas_nao_entrega_quadro_e_recusado(monkeypatch):
+    """É o caso real: a webcam abre, a luz acende e a imagem nunca vem."""
+    instalar_capturas(monkeypatch, [(True, False), (True, True)])
+
+    fonte = FonteDeVideo('0')
+    assert fonte.backend == 'DirectShow'
+
+
+def test_o_primeiro_backend_que_funciona_e_o_escolhido(monkeypatch):
+    instalar_capturas(monkeypatch, [(True, True)])
+    assert FonteDeVideo('0').backend == 'Media Foundation'
+
+
+def test_backend_recusado_e_liberado(monkeypatch):
+    """Captura aberta e abandonada deixa a câmera ocupada para o resto do sistema."""
+    criadas = instalar_capturas(monkeypatch, [(True, False), (True, True)])
+    FonteDeVideo('0')
+    assert criadas[0].liberada is True
+    assert criadas[1].liberada is False
+
+
+def test_todos_os_backends_sao_tentados_antes_de_desistir(monkeypatch):
+    criadas = instalar_capturas(monkeypatch, [(False, False)] * 3)
+    with pytest.raises(FonteIndisponivel):
+        FonteDeVideo('0')
+    assert len(criadas) == len(BACKENDS_DE_CAMERA)
 
 
 # --------------------------------------------------------------------------

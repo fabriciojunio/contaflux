@@ -161,9 +161,25 @@ def analisar_linha(texto: str | None, largura: int, altura: int) -> Linha:
     return Linha(x1, y1, x2, y2)
 
 
+INTERVALO_DA_DEMONSTRACAO = 26
+"""Quadros entre a entrada de um veículo e a do seguinte."""
+
+
 def _cena_de_demonstracao(quantidade: int) -> GeradorDeCena:
-    parametros = ParametrosCena(quadros=460, semente=12, oscilacao_luz=0.03)
-    parametros.veiculos = veiculos_regulares(quantidade, parametros, semente=12)
+    """Cena sintética com duração ajustada à quantidade de veículos.
+
+    A duração é calculada, e não fixa, porque uma demonstração com três carros
+    numa cena de dezoito segundos passa a maior parte do tempo mostrando pista
+    vazia. Ela é a soma do que o último veículo espera para entrar com o tempo
+    de atravessar o quadro, mais uma folga.
+    """
+    entrada_do_ultimo = 20 + max(0, quantidade - 1) * INTERVALO_DA_DEMONSTRACAO
+    quadros = max(200, entrada_do_ultimo + 160)
+
+    parametros = ParametrosCena(quadros=quadros, semente=12, oscilacao_luz=0.03)
+    parametros.veiculos = veiculos_regulares(
+        quantidade, parametros, intervalo=INTERVALO_DA_DEMONSTRACAO, semente=12
+    )
     return GeradorDeCena(parametros)
 
 
