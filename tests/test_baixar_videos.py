@@ -60,9 +60,9 @@ def falhar(monkeypatch, erro: Exception):
 # --------------------------------------------------------------------------
 
 
-def test_a_colecao_tem_oito_videos():
-    """Oito, e não os dezoito do começo: só ficaram os que contam certo."""
-    assert len(bv.COLECAO) == 8
+def test_a_colecao_tem_tres_videos():
+    """Três, e não os dezoito do começo: ficaram os que passam no olho."""
+    assert len(bv.COLECAO) == 3
 
 
 def test_os_nomes_sao_unicos():

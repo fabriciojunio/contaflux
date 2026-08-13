@@ -74,17 +74,16 @@ o download do projeto pesado para sempre. Eles são baixados na hora:
 python baixar_videos.py
 ```
 
-São oito vídeos de rodovia, todos do Pixabay, sob licença que permite uso livre.
+São três vídeos de rodovia, todos do Pixabay, sob licença que permite uso livre.
 Se a internet cair no meio, rode o comando de novo: ele pula os que já vieram e
 baixa só o que falta.
 
-Todos foram conferidos um a um, e os que não contavam direito foram tirados da
-coleção em vez de maquiados. Estes três são os melhores para uma demonstração,
-porque os veículos aparecem grandes e a contagem acompanha o que se vê na tela:
+Cada um foi conferido olhando a tela, e não só o número: as caixas de detecção
+precisam cair em cima dos veículos e em mais nada. A coleção começou com
+dezoito e ficou em três por causa desse critério.
 
-- `04-estrada-aberta` — o mais movimentado, 32 veículos
-- `06-via-movimentada` — trânsito denso visto de cima, 68 veículos
-- `01-rodovia-de-frente` — carros vindo em direção à câmera, 23 em um minuto
+O `01-rodovia-de-frente` é o melhor para demonstrar: a pista preenche o quadro,
+os carros aparecem grandes e não há céu nem água para confundir o detector.
 
 Você também pode usar **seus próprios vídeos**: é só copiar os arquivos para a
 pasta `videos`. Funciona com `.mp4`, `.avi`, `.mkv`, `.mov` e `.webm`.
@@ -106,7 +105,7 @@ Vídeos disponíveis:
    2. 02-rodovia-lateral.mp4  (3840x2160, 26s)
    ...
 --------------------------------------------------------------
-Qual vídeo? (1 a 8, ou q para sair):
+Qual vídeo? (1 a 3, ou q para sair):
 ```
 
 Digite o número e aperte Enter. **Pronto, não precisa fazer mais nada.**

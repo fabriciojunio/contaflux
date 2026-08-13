@@ -44,57 +44,35 @@ class VideoDeExemplo:
         return PASTA / f'{self.nome}.mp4'
 
 
-# A coleção é variada de propósito: pista de mão dupla, ponte vista de cima,
-# rua de cidade, câmera de frente e câmera de lado. Um contador que só funciona
-# num enquadramento não serve de nada.
+# Três vídeos, e não os dezoito do começo. O critério para ficar foi um só, e
+# foi aplicado olhando a tela: as caixas de detecção têm que cair em cima dos
+# veículos, e em mais nada.
 #
-# Ela começou com dezoito vídeos e ficou em oito, e o critério para ficar foi um
-# só: a contagem tem que bater com o que se vê na tela. Os dez que saíram estão
-# listados no README, com o motivo de cada um. Vale a pena saber que dois deles
-# saíram depois de já estarem na coleção, por medida: uma filmagem aérea em que
-# o carro tem 120 pixels contra o piso de 700 do detector, e que por isso contava
-# 2 num viaduto cheio; e uma avenida com tanto pedestre na calçada que a conta
-# subia para 89. Nos dois casos o problema é do método, não do ajuste.
+# Vale registrar o que reprovou os outros, porque delimita onde o método serve.
+# Filmagem de drone e dashcam quebram a premissa de câmera fixa. Cena com céu
+# aberto, água ou vegetação distante entrega nuvem andando e reflexo como
+# movimento, e o contador marca caixa no horizonte. Tomada aérea alta deixa o
+# carro com menos pixels que o piso de área do detector.
+#
+# O erro que gerou esta lista merece nota: a primeira triagem foi feita só pelos
+# números, e um vídeo de porto que marcava contêineres e guindastes passou
+# porque "32 veículos" parecia plausível para uma estrada. Número plausível não
+# é validação; olhar a imagem é.
 COLECAO = (
     VideoDeExemplo(
         '01-rodovia-de-frente',
         '2016/01/11/1900-151662242_large.mp4',
-        'pista dupla, câmera baixa, veículos vindo de frente. Conta 23 em 60 s',
+        'pista dupla, câmera baixa, veículos vindo de frente. O mais limpo',
     ),
     VideoDeExemplo(
-        '02-rodovia-lateral',
-        '2018/09/04/18083-288452975_large.mp4',
-        'pista vista de longe, veículos pequenos na imagem. Conta 21',
-    ),
-    VideoDeExemplo(
-        '03-trafego-urbano',
-        '2020/10/28/53583-475000652_large.mp4',
-        'ponte vista de cima, dois sentidos separados. Conta 8',
-    ),
-    VideoDeExemplo(
-        '04-estrada-aberta',
-        '2019/05/01/23232-333604632_large.mp4',
-        'viaduto largo, fluxo constante. Conta 32, o mais movimentado',
-    ),
-    VideoDeExemplo(
-        '05-rua-de-cidade',
+        '02-rua-de-cidade',
         '2020/09/19/50299-460295794_large.mp4',
-        'rua com carros parados dos dois lados, que o fundo aprende. Conta 8',
+        'rua com carros parados dos dois lados, que o fundo aprende',
     ),
     VideoDeExemplo(
-        '06-via-movimentada',
+        '03-via-movimentada',
         '2019/05/15/23712-337108764_large.mp4',
-        'trânsito denso visto de cima, veículos grandes na imagem. Conta 68',
-    ),
-    VideoDeExemplo(
-        '07-rua-comercial',
-        '2019/08/06/25816-352978422_large.mp4',
-        'rua de comércio, veículos lentos e pedestres na calçada. Conta 7',
-    ),
-    VideoDeExemplo(
-        '08-rotatoria',
-        '2021/05/27/75457-556022183_large.mp4',
-        'rotatória vista de cima, trajetória curva. Conta 9',
+        'trânsito denso visto de cima, veículos grandes na imagem',
     ),
 )
 
