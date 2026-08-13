@@ -17,7 +17,7 @@ python -m contaflux 0           # conta ao vivo pela câmera
 python -m contaflux             # demonstração, sem precisar de vídeo
 ```
 
-Os três vídeos de exemplo não vêm no repositório, para não deixá-lo pesado. Um
+Os cinco vídeos de exemplo não vêm no repositório, para não deixá-lo pesado. Um
 comando os baixa:
 
 ```
@@ -84,6 +84,37 @@ princípio do laço indutivo enterrado no asfalto.
 A travessia é detectada pelo sinal do produto vetorial entre a linha e o centro
 do objeto. O sinal diz de que lado o ponto está; a troca de sinal entre dois
 quadros consecutivos significa que a linha foi cruzada no intervalo.
+
+## Dois jeitos de achar o veículo
+
+O sistema tem dois detectores, e a diferença entre eles é a pergunta que cada um
+faz.
+
+**Subtração de fundo** pergunta *"isso se moveu?"*. Não precisa baixar nada,
+roda em qualquer máquina e é rápido. Em pista limpa a resposta serve, porque a
+única coisa que se move é veículo. Fora dela, não: num vídeo de porto ele marcou
+contêiner, guindaste e reflexo na água; num vídeo com céu aberto, marcou nuvem.
+Todos são movimento de verdade, e nenhum é carro.
+
+**Reconhecimento** pergunta *"isso é um carro?"*. Usa um modelo YOLO treinado, e
+com ele prédio, árvore, céu e pedestre deixam de aparecer na conta. Foi testado
+numa rodovia com a cidade inteira ao fundo e numa rua arborizada: zero caixa
+fora dos veículos. Ele também informa o tipo do veículo, o que resolve de vez a
+classificação de porte, que antes era deduzida do tamanho em pixels e errava sob
+perspectiva.
+
+```
+contaflux via.mp4                      # usa reconhecimento se estiver instalado
+contaflux via.mp4 --detector movimento # força subtração de fundo
+pip install ultralytics                # é o que liga o reconhecimento
+```
+
+O preço do reconhecimento é real: o pacote e o modelo somam centenas de
+megabytes, e sem placa de vídeo é lento. Medido neste projeto, o modelo nano
+leva 0,16 segundo por quadro e o grande 1,32, o que num vídeo de três mil
+quadros é a diferença entre nove e setenta e um minutos. Por isso ele é
+opcional, e por isso o executável não o inclui: sem o pacote, o programa avisa e
+usa a subtração de fundo.
 
 ## Como funciona, em quatro etapas
 

@@ -51,6 +51,16 @@ def construir() -> int:
         'cv2',
         '--collect-submodules',
         'contaflux',
+        # A detecção por reconhecimento fica de fora do executável de propósito.
+        # O torch e os modelos somam quase um gigabyte, e o executável existe
+        # justamente para quem quer rodar sem instalar nada. Quem precisa do
+        # reconhecimento instala o projeto pelo pip, onde ele é uma linha.
+        '--exclude-module',
+        'ultralytics',
+        '--exclude-module',
+        'torch',
+        '--exclude-module',
+        'torchvision',
         '--noconfirm',
         str(ENTRADA),
     ]

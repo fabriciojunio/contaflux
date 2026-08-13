@@ -44,35 +44,44 @@ class VideoDeExemplo:
         return PASTA / f'{self.nome}.mp4'
 
 
-# Três vídeos, e não os dezoito do começo. O critério para ficar foi um só, e
-# foi aplicado olhando a tela: as caixas de detecção têm que cair em cima dos
-# veículos, e em mais nada.
+# Cinco vídeos, escolhidos olhando a tela e não os números: as caixas de
+# detecção têm que cair em cima dos veículos, e em mais nada.
 #
-# Vale registrar o que reprovou os outros, porque delimita onde o método serve.
-# Filmagem de drone e dashcam quebram a premissa de câmera fixa. Cena com céu
-# aberto, água ou vegetação distante entrega nuvem andando e reflexo como
-# movimento, e o contador marca caixa no horizonte. Tomada aérea alta deixa o
-# carro com menos pixels que o piso de área do detector.
+# Dois deles, o 04 e o 05, entraram de propósito com prédio, árvore e cidade no
+# quadro. Eles não passariam na versão anterior do detector, que marcava
+# qualquer coisa em movimento e enchia a tela de caixa em nuvem e em vegetação.
+# Com o reconhecimento de veículo eles funcionam, e é justamente isso que
+# mostram.
 #
-# O erro que gerou esta lista merece nota: a primeira triagem foi feita só pelos
-# números, e um vídeo de porto que marcava contêineres e guindastes passou
-# porque "32 veículos" parecia plausível para uma estrada. Número plausível não
-# é validação; olhar a imagem é.
+# O que continua reprovando um vídeo é o veículo ficar pequeno demais na
+# imagem: filmagem aérea alta e tomada muito distante rendem carro com poucos
+# pixels, e o modelo não reconhece o que mal dá para ver. Filmagem de drone e
+# dashcam também estão fora, porque a contagem por linha pressupõe câmera fixa.
 COLECAO = (
     VideoDeExemplo(
         '01-rodovia-de-frente',
         '2016/01/11/1900-151662242_large.mp4',
-        'pista dupla, câmera baixa, veículos vindo de frente. O mais limpo',
+        'pista dupla, veículos vindo de frente e bem próximos. O melhor da coleção',
     ),
     VideoDeExemplo(
         '02-rua-de-cidade',
         '2020/09/19/50299-460295794_large.mp4',
-        'rua com carros parados dos dois lados, que o fundo aprende',
+        'rua com carros parados dos dois lados e trânsito passando no meio',
     ),
     VideoDeExemplo(
         '03-via-movimentada',
         '2019/05/15/23712-337108764_large.mp4',
-        'trânsito denso visto de cima, veículos grandes na imagem',
+        'trânsito denso visto de passarela, muitos veículos ao mesmo tempo',
+    ),
+    VideoDeExemplo(
+        '04-rua-com-arvores',
+        '2019/10/25/28293-369325244_large.mp4',
+        'rua arborizada com prédios, para mostrar que o entorno não atrapalha',
+    ),
+    VideoDeExemplo(
+        '05-rodovia-urbana',
+        '2020/07/04/43849-437611813_large.mp4',
+        'rodovia larga com a cidade ao fundo, várias faixas no mesmo sentido',
     ),
 )
 
