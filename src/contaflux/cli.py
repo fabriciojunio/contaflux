@@ -24,14 +24,46 @@ from contaflux import __version__
 from contaflux.cena import GeradorDeCena, ParametrosCena, veiculos_regulares
 from contaflux.contagem import Linha
 from contaflux.desenho import anotar, lado_a_lado
+from contaflux.menu import escolher_video
 from contaflux.perfis import PERFIS, obter
 from contaflux.pipeline import ContadorDeFluxo
 from contaflux.relatorio import Relatorio
+from contaflux.selecao import escolher_linha, primeiro_quadro_util
+from contaflux.sugestao import sugerir_linha
 from contaflux.velocidade import Escala
 from contaflux.video import FonteDeVideo, FonteIndisponivel
 
 TECLA_SAIR = {ord('q'), ord('Q'), 27}
 TECLA_PAUSA = {ord(' ')}
+
+SEGUNDOS_DE_AQUECIMENTO = 5.0
+"""Quanto de vídeo real é descartado para o fundo ser aprendido.
+
+O número saiu de medida, num vídeo de rodovia de 50 quadros por segundo. Com
+menos que isso, o modelo ainda não aprendeu a pista e produz uma rajada de
+contagens fantasmas no começo: com 0,9 segundo apareceram 12 travessias nos 8
+segundos seguintes, contra 2 quando o aquecimento subiu para 5 segundos. O
+total caiu de 37 para 26 e parou de mudar, que é o sinal de que o excesso era
+artefato e não veículo.
+
+Cinco segundos batem com a janela de histórico do modelo, de 300 quadros, e é
+por aí que a explicação fecha: antes disso ele simplesmente não viu a cena
+vazia tempo suficiente.
+"""
+
+QUADROS_DE_OBSERVACAO = 400
+"""Quantos quadros são olhados para deduzir onde fica a linha.
+
+Precisa cobrir o aquecimento do modelo de fundo e ainda sobrar alguns segundos
+de tráfego depois dele, senão a amostra vira ruído do próprio aquecimento."""
+
+AQUECIMENTO_DA_DEMONSTRACAO = 45
+"""A cena sintética tem fundo estático e converge quase de imediato.
+
+Usar os mesmos 5 segundos aqui descartaria boa parte de uma demonstração curta
+sem ganho nenhum, porque o problema que o aquecimento resolve, que é ruído de
+sensor e compressão do vídeo real, não existe numa cena gerada.
+"""
 
 
 def preparar_console() -> None:
@@ -95,6 +127,26 @@ def construir_parser() -> argparse.ArgumentParser:
         help='linha de contagem como x1,y1,x2,y2. Sem isso, uma vertical no meio.',
     )
     parser.add_argument(
+        '--desenhar-linha',
+        action='store_true',
+        help='mostra o primeiro quadro para você marcar a linha com o mouse',
+    )
+    parser.add_argument(
+        '--menu',
+        action='store_true',
+        help='lista os vídeos da pasta e deixa você escolher pelo número',
+    )
+    parser.add_argument(
+        '--linha-fixa',
+        action='store_true',
+        help='usa a vertical do meio em vez de deduzir a linha pelo tráfego',
+    )
+    parser.add_argument(
+        '--pasta',
+        default='videos',
+        help='onde o menu procura os vídeos (padrão: videos)',
+    )
+    parser.add_argument(
         '--metros',
         type=float,
         help='quantos metros de via cabem na largura do quadro; liga a velocidade',
@@ -111,8 +163,7 @@ def construir_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         '--aquecimento',
         type=int,
-        default=45,
-        help='quadros descartados enquanto o fundo é aprendido (padrão: 45)',
+        help='quadros descartados enquanto o fundo é aprendido (padrão: 5 segundos)',
     )
     parser.add_argument(
         '--mascara', action='store_true', help='mostra a máscara de movimento ao lado'
@@ -133,6 +184,9 @@ def construir_parser() -> argparse.ArgumentParser:
         help='grava a cena da demonstração como vídeo e encerra, sem contar nada',
     )
     parser.add_argument('--versao', action='version', version=f'contaflux {__version__}')
+    # O programa inteiro fala português, e quem for usar vai tentar --ajuda
+    # antes de --help. Custa uma linha atender.
+    parser.add_argument('--ajuda', action='help', help='mostra esta ajuda')
     return parser
 
 
@@ -199,6 +253,14 @@ class Entrada:
     """Guardado para poder ser liberado no fim. Câmera que não é liberada fica
     ocupada até o processo morrer, e o próximo programa não consegue abri-la."""
 
+    sintetica: bool = False
+    """Cena gerada precisa de bem menos aquecimento que vídeo real."""
+
+    def aquecimento_padrao(self) -> int:
+        if self.sintetica:
+            return AQUECIMENTO_DA_DEMONSTRACAO
+        return max(AQUECIMENTO_DA_DEMONSTRACAO, int(self.fps * SEGUNDOS_DE_AQUECIMENTO))
+
 
 def _preparar_entrada(argumentos, saida) -> Entrada:
     if argumentos.fonte == 'demo':
@@ -210,7 +272,15 @@ def _preparar_entrada(argumentos, saida) -> Entrada:
             f'{esperado} deles cruzando a linha.',
             file=saida,
         )
-        return Entrada(cena.quadros(), p.largura, p.altura, p.fps, 'demonstração', esperado)
+        return Entrada(
+            cena.quadros(),
+            p.largura,
+            p.altura,
+            p.fps,
+            'demonstração',
+            esperado,
+            sintetica=True,
+        )
 
     fonte = FonteDeVideo(argumentos.fonte, redimensionar_para=argumentos.largura)
     info = fonte.info
@@ -255,23 +325,103 @@ def salvar_cena_de_demonstracao(argumentos, saida=sys.stdout) -> Path:
     return destino
 
 
+class Cancelado(Exception):
+    """A pessoa desistiu na tela de escolha. Não é erro."""
+
+
+def _e_arquivo(fonte: str) -> bool:
+    return fonte != 'demo' and not str(fonte).isdigit()
+
+
+def _linha_sugerida(argumentos, largura: int, altura: int, perfil, saida) -> Linha | None:
+    """Observa alguns segundos do vídeo e deduz onde a linha deve ficar.
+
+    Só vale para arquivo: a observação consome quadros, e num arquivo dá para
+    reabrir do começo e contar tudo depois. Numa câmera ao vivo esses segundos
+    passariam sem ser contados.
+    """
+    if not _e_arquivo(argumentos.fonte):
+        return None
+
+    print('Observando o tráfego para posicionar a linha...', file=saida)
+    try:
+        with FonteDeVideo(argumentos.fonte, redimensionar_para=argumentos.largura) as fonte:
+            linha, observacao = sugerir_linha(
+                fonte.quadros(), largura, altura, perfil, QUADROS_DE_OBSERVACAO
+            )
+    except FonteIndisponivel:
+        return None
+
+    if linha is None:
+        print(
+            '  Não deu para deduzir: pouco movimento nos primeiros segundos. '
+            'Usando uma vertical no meio do quadro.',
+            file=saida,
+        )
+        return None
+
+    print(
+        f'  {observacao.total_de_alvos} veículos observados. '
+        f'Linha em {linha.x1:.0f},{linha.y1:.0f} até {linha.x2:.0f},{linha.y2:.0f}.',
+        file=saida,
+    )
+    print('  Para escolher outra:  --desenhar-linha  ou  --linha x1,y1,x2,y2', file=saida)
+    return linha
+
+
+def _definir_linha(argumentos, largura: int, altura: int, perfil, saida) -> Linha:
+    """Linha informada, desenhada com o mouse, deduzida do tráfego, ou a padrão."""
+    if argumentos.linha:
+        return analisar_linha(argumentos.linha, largura, altura)
+
+    if argumentos.desenhar_linha and argumentos.fonte != 'demo':
+        quadro = primeiro_quadro_util(
+            argumentos.fonte, pular=30, largura=argumentos.largura
+        )
+        if quadro is not None:
+            print('Marque a linha de contagem com o mouse na janela que abriu.', file=saida)
+            escolhida = escolher_linha(quadro)
+            if escolhida is None:
+                raise Cancelado('Escolha da linha cancelada.')
+            print(
+                f'Linha: {escolhida.x1:.0f},{escolhida.y1:.0f} até '
+                f'{escolhida.x2:.0f},{escolhida.y2:.0f}',
+                file=saida,
+            )
+            return escolhida
+
+    if not argumentos.linha_fixa:
+        sugerida = _linha_sugerida(argumentos, largura, altura, perfil, saida)
+        if sugerida is not None:
+            return sugerida
+
+    return analisar_linha(None, largura, altura)
+
+
 def executar(argumentos, saida=sys.stdout) -> Relatorio:
     """Roda o processamento inteiro e devolve o relatório."""
     entrada = _preparar_entrada(argumentos, saida)
     quadros, largura, altura = entrada.quadros, entrada.largura, entrada.altura
     fps, rotulo, esperado = entrada.fps, entrada.rotulo, entrada.esperado
-    linha = analisar_linha(argumentos.linha, largura, altura)
     perfil = obter(argumentos.perfil)
+    linha = _definir_linha(argumentos, largura, altura, perfil, saida)
 
     escala = None
     if argumentos.metros:
         escala = Escala.de_largura(largura, argumentos.metros, fps)
 
+    aquecimento = (
+        argumentos.aquecimento
+        if argumentos.aquecimento is not None
+        else entrada.aquecimento_padrao()
+    )
+
     contador = ContadorDeFluxo(
         linha,
         perfil=perfil,
         escala=escala,
-        quadros_de_aquecimento=argumentos.aquecimento,
+        fps=fps,
+        quadros_de_aquecimento=aquecimento,
     )
 
     mostrar = not argumentos.sem_janela
@@ -361,7 +511,21 @@ def main(argv: list[str] | None = None) -> int:
         if argumentos.salvar_demo:
             salvar_cena_de_demonstracao(argumentos)
             return 0
+
+        if argumentos.menu:
+            escolhido = escolher_video(argumentos.pasta)
+            if escolhido is None:
+                return 0
+            argumentos.fonte = str(escolhido)
+            # Quem entra pelo menu não vai digitar coordenadas, então a linha
+            # é desenhada com o mouse a menos que já tenha vindo pronta.
+            if not argumentos.linha:
+                argumentos.desenhar_linha = True
+
         executar(argumentos)
+    except Cancelado:
+        print('Cancelado.', file=sys.stderr)
+        return 0
     except (FonteIndisponivel, ValueError) as erro:
         print(f'Erro: {erro}', file=sys.stderr)
         return 1
