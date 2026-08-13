@@ -78,6 +78,21 @@ São dez vídeos de rodovia, todos do Pixabay, sob licença que permite uso livr
 Se a internet cair no meio, rode o comando de novo: ele pula os que já vieram e
 baixa só o que falta.
 
+A coleção é variada de propósito, e nem todos são fáceis. Estes são os melhores
+para uma demonstração, porque os veículos aparecem grandes e a contagem
+acompanha bem o que se vê na tela:
+
+- `01-rodovia-de-frente` — carros vindo em direção à câmera, 23 em um minuto
+- `04-estrada-aberta` — o mais movimentado da coleção, 32 veículos
+- `08-via-movimentada` — trânsito denso visto de cima, veículos grandes
+
+E estes mostram onde o método sofre, o que também vale mostrar:
+
+- `06-viaduto` — vista aérea alta, os veículos ficam pequenos e quase nenhum é
+  detectado
+- `07-avenida-larga` — muito movimento de pedestre na calçada entra na conta e
+  o número sai alto demais
+
 Você também pode usar **seus próprios vídeos**: é só copiar os arquivos para a
 pasta `videos`. Funciona com `.mp4`, `.avi`, `.mkv`, `.mov` e `.webm`.
 

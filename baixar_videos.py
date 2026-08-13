@@ -52,52 +52,52 @@ COLECAO = (
     VideoDeExemplo(
         '01-rodovia-de-frente',
         '2016/01/11/1900-151662242_large.mp4',
-        'pista dupla, câmera baixa, veículos vindo em direção à câmera',
+        'pista dupla, câmera baixa, veículos vindo de frente. Conta 23 em 60 s',
     ),
     VideoDeExemplo(
         '02-rodovia-lateral',
         '2018/09/04/18083-288452975_large.mp4',
-        'pista vista de longe, veículos pequenos na imagem',
+        'pista vista de longe, veículos pequenos na imagem. Conta 21',
     ),
     VideoDeExemplo(
         '03-trafego-urbano',
         '2020/10/28/53583-475000652_large.mp4',
-        'ponte vista de cima, dois sentidos separados',
+        'ponte vista de cima, dois sentidos separados. Conta 8',
     ),
     VideoDeExemplo(
         '04-estrada-aberta',
         '2019/05/01/23232-333604632_large.mp4',
-        'viaduto largo, fluxo constante',
+        'viaduto largo, fluxo constante. Conta 32, o mais movimentado',
     ),
     VideoDeExemplo(
         '05-rua-de-cidade',
         '2020/09/19/50299-460295794_large.mp4',
-        'rua com carros estacionados dos dois lados',
+        'rua com carros parados dos dois lados, que o fundo aprende. Conta 8',
     ),
     VideoDeExemplo(
         '06-viaduto',
         '2022/03/05/109756-685086367_large.mp4',
-        'vista alta de viaduto, pouca perspectiva',
+        'vista aérea alta: os veículos ficam pequenos e poucos são vistos. Conta 2',
     ),
     VideoDeExemplo(
         '07-avenida-larga',
         '2020/08/29/48504-454713939_large.mp4',
-        'avenida de várias faixas, câmera fixa ao nível da via',
+        'avenida larga com muito movimento na calçada. Conta 89, provavelmente demais',
     ),
     VideoDeExemplo(
         '08-via-movimentada',
         '2019/05/15/23712-337108764_large.mp4',
-        'trânsito denso visto de passarela, veículos grandes na imagem',
+        'trânsito denso visto de cima, veículos grandes na imagem. Conta 68',
     ),
     VideoDeExemplo(
         '09-rua-comercial',
         '2019/08/06/25816-352978422_large.mp4',
-        'rua de comércio, veículos lentos e pedestres na calçada',
+        'rua de comércio, veículos lentos e pedestres na calçada. Conta 7',
     ),
     VideoDeExemplo(
         '10-rotatoria',
         '2021/05/27/75457-556022183_large.mp4',
-        'rotatória vista de cima, tráfego em curva',
+        'rotatória vista de cima, trajetória curva. Conta 9',
     ),
 )
 
