@@ -46,6 +46,16 @@ def interpretar_escolha(texto: str, total: int) -> int | None:
     return escolha
 
 
+def _texto_sem_teclado(videos: list[Path]) -> str:
+    """O que dizer quando o menu não conseguiu ler o teclado."""
+    exemplo = videos[0] if videos else Path('videos/rodovia.mp4')
+    return (
+        'Não consegui ler o teclado neste terminal.\n\n'
+        'Passe o vídeo direto na linha de comando, que funciona igual:\n'
+        f'  contaflux "{exemplo}"\n'
+    )
+
+
 def _texto_de_pasta_vazia(pasta: str) -> str:
     return (
         f'Nenhum vídeo encontrado em "{pasta}".\n\n'
@@ -66,11 +76,20 @@ def escolher_video(
 
     print(montar_menu(videos), file=saida)
 
+    leu_alguma_vez = False
     while True:
         try:
             digitado = entrada(f'Qual vídeo? (1 a {len(videos)}, ou q para sair): ')
+            leu_alguma_vez = True
         except (EOFError, KeyboardInterrupt):
             print('', file=saida)
+            # Fim de arquivo logo na primeira leitura não é alguém desistindo:
+            # é o teclado não chegando ao programa. Aconteceu no executável, e o
+            # menu sumia da tela sem explicar nada, com o número digitado indo
+            # parar no prompt do sistema. Quem passa por isso precisa saber que
+            # existe outro caminho.
+            if not leu_alguma_vez:
+                print(_texto_sem_teclado(videos), file=saida)
             return None
 
         try:

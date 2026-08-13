@@ -79,6 +79,13 @@ def preparar_console() -> None:
     para escrever nela. Fora do Windows nada disso é necessário e a função não
     faz nada. Se qualquer das duas falhar, o programa segue com o texto
     estranho, que é bem melhor do que não rodar.
+
+    A entrada é ajustada junto com a saída, e isso não é simetria por capricho.
+    A primeira versão mexia só na saída, e no executável o menu passou a
+    imprimir a lista e encerrar sem esperar resposta: a leitura do teclado
+    devolvia fim de arquivo na primeira tentativa. Deixar as duas páginas de
+    código em UTF-8 mantém entrada e saída no mesmo idioma e a leitura volta a
+    funcionar.
     """
     if sys.platform != 'win32':
         return
@@ -87,13 +94,14 @@ def preparar_console() -> None:
         import ctypes
 
         ctypes.windll.kernel32.SetConsoleOutputCP(65001)
+        ctypes.windll.kernel32.SetConsoleCP(65001)
     except Exception:
         pass
 
-    for fluxo in (sys.stdout, sys.stderr):
+    for fluxo in (sys.stdin, sys.stdout, sys.stderr):
         try:
             fluxo.reconfigure(encoding='utf-8')
-        except (AttributeError, ValueError):
+        except (AttributeError, ValueError, OSError):
             pass
 
 

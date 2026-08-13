@@ -129,3 +129,29 @@ def test_encerrar_a_entrada_devolve_nada(tmp_path):
     """Ctrl+C ou fim de entrada não pode virar exceção na cara do usuário."""
     criar(tmp_path, 'a.mp4')
     assert escolher_video(str(tmp_path), entrada=respostas(), saida=io.StringIO()) is None
+
+
+def test_teclado_indisponivel_ensina_o_caminho_alternativo(tmp_path):
+    """Fim de arquivo na primeira leitura é teclado que não chega, não desistência.
+
+    Aconteceu no executável: o menu imprimia a lista, encerrava sem esperar
+    resposta, e o número digitado ia parar no prompt do sistema. Sair calado
+    deixa quem está usando sem saber o que fazer.
+    """
+    criar(tmp_path, 'a.mp4')
+    saida = io.StringIO()
+
+    assert escolher_video(str(tmp_path), entrada=respostas(), saida=saida) is None
+
+    texto = saida.getvalue()
+    assert 'Não consegui ler o teclado' in texto
+    assert 'a.mp4' in texto
+
+
+def test_sair_de_proposito_nao_mostra_o_aviso_de_teclado(tmp_path):
+    """Quem digitou q sabe o que fez, e não precisa de instrução de socorro."""
+    criar(tmp_path, 'a.mp4')
+    saida = io.StringIO()
+
+    assert escolher_video(str(tmp_path), entrada=respostas('q'), saida=saida) is None
+    assert 'Não consegui ler o teclado' not in saida.getvalue()
