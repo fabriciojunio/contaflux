@@ -30,6 +30,7 @@ from contaflux.porte import FaixasDePorte
 from contaflux.pipeline import ContadorDeFluxo
 from contaflux.relatorio import Relatorio
 from contaflux.selecao import escolher_linha, primeiro_quadro_util
+from contaflux.deteccao_yolo import DetectorYolo, UltralyticsIndisponivel
 from contaflux.sugestao import sugerir_linha
 from contaflux.velocidade import Escala
 from contaflux.video import FonteDeVideo, FonteIndisponivel
@@ -124,6 +125,16 @@ def construir_parser() -> argparse.ArgumentParser:
         nargs='?',
         default='demo',
         help='caminho do vídeo, índice da câmera ou "demo" (padrão: demo)',
+    )
+    parser.add_argument(
+        '--detector',
+        default='auto',
+        choices=('auto', 'yolo', 'movimento'),
+        help=(
+            'como achar os veículos. "yolo" reconhece o veículo e ignora nuvem, '
+            'sombra e pedestre; "movimento" usa subtração de fundo e não precisa '
+            'baixar nada. "auto" usa yolo se estiver instalado (padrão)'
+        ),
     )
     parser.add_argument(
         '--perfil',
@@ -349,6 +360,29 @@ def salvar_cena_de_demonstracao(argumentos, saida=sys.stdout) -> Path:
     return destino
 
 
+def montar_detector(escolha: str, perfil, saida=sys.stdout):
+    """Cria o detector pedido, ou explica por que caiu no outro.
+
+    "auto" prefere o reconhecimento porque é ele que distingue carro de nuvem,
+    de contêiner e de pedestre. Sem o pacote instalado, cai na subtração de
+    fundo em vez de falhar: ela conta bem em pista limpa e não precisa baixar
+    nada, o que mantém a demonstração funcionando em qualquer máquina.
+    """
+    if escolha == 'movimento':
+        return None
+
+    try:
+        detector = DetectorYolo()
+    except UltralyticsIndisponivel as erro:
+        if escolha == 'yolo':
+            raise
+        print(f'Detecção por reconhecimento indisponível, usando movimento.', file=saida)
+        return None
+
+    print('Detectando por reconhecimento de veículo (YOLO).', file=saida)
+    return detector
+
+
 class Cancelado(Exception):
     """A pessoa desistiu na tela de escolha. Não é erro."""
 
@@ -461,11 +495,17 @@ def executar(argumentos, saida=sys.stdout) -> Relatorio:
         else entrada.aquecimento_padrao()
     )
 
+    detector = montar_detector(argumentos.detector, perfil, saida)
+    if detector is not None:
+        # O reconhecimento não aprende a cena, então não há o que aquecer.
+        aquecimento = 0
+
     contador = ContadorDeFluxo(
         linha,
         perfil=perfil,
         escala=escala,
         fps=fps,
+        detector=detector,
         quadros_de_aquecimento=aquecimento,
     )
 

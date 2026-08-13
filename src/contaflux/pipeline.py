@@ -143,7 +143,11 @@ class ContadorDeFluxo:
             classe = DESCONHECIDO
             velocidade = None
             if alvo is not None:
-                classe = self.perfil.faixas.classificar(alvo.area)
+                # Quando o detector reconheceu o veículo, o tipo vem dele. A
+                # dedução por área só entra quando não há reconhecimento, e ela
+                # erra feio sob perspectiva: o mesmo carro triplica de área ao
+                # se aproximar da câmera.
+                classe = alvo.classe or self.perfil.faixas.classificar(alvo.area)
                 if self.escala is not None:
                     velocidade = em_km_por_hora(alvo, self.escala)
                 self.classes[identificador] = classe

@@ -40,6 +40,8 @@ class Alvo:
     contado: bool = False
     quadros_visto: int = 1
     area: int = 0
+    classe: str = ''
+    """Tipo do veículo, quando o detector informa. Vazio com subtração de fundo."""
 
     @property
     def deslocamento(self) -> tuple[float, float]:
@@ -136,6 +138,7 @@ class Rastreador:
             trajetoria=[deteccao.centro],
             indices=[indice],
             area=deteccao.area,
+            classe=deteccao.classe,
         )
         self.alvos[self._proximo_id] = alvo
         self._proximo_id += 1
@@ -156,6 +159,11 @@ class Rastreador:
         # recortado ao entrar e ao sair do quadro, e é no meio que ele tem o
         # tamanho verdadeiro.
         alvo.area = max(alvo.area, deteccao.area)
+        # A classe do detector pode oscilar entre quadros, sobretudo quando o
+        # veículo está longe. Manter a última reconhecida, e não sobrescrever
+        # com vazio, evita que um quadro ruim apague o que já se sabia.
+        if deteccao.classe:
+            alvo.classe = deteccao.classe
 
     def _envelhecer(self, atualizados: set[int]) -> None:
         for identificador in list(self.alvos):

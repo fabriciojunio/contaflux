@@ -96,6 +96,12 @@ class Deteccao:
     largura: int
     altura: int
     area: int
+    classe: str = ''
+    """Que tipo de veículo é, quando o detector sabe dizer.
+
+    A subtração de fundo não sabe: ela enxerga uma mancha que se move e nada
+    mais. Um detector treinado sabe, e aí o porte deixa de ser deduzido do
+    tamanho em pixels e passa a ser o que o detector reconheceu."""
 
     @property
     def centro(self) -> tuple[float, float]:
