@@ -44,10 +44,17 @@ class VideoDeExemplo:
         return PASTA / f'{self.nome}.mp4'
 
 
-# A coleção é variada de propósito: pista de mão dupla, via expressa vista de
-# cima, cruzamento urbano, câmera de frente e câmera de lado. Um contador que
-# só funciona num enquadramento não serve de nada, e é justamente a variedade
-# que mostra onde o método se sustenta e onde ele sofre.
+# A coleção é variada de propósito: pista de mão dupla, ponte vista de cima,
+# rua de cidade, câmera de frente e câmera de lado. Um contador que só funciona
+# num enquadramento não serve de nada.
+#
+# Ela começou com dezoito vídeos e ficou em oito, e o critério para ficar foi um
+# só: a contagem tem que bater com o que se vê na tela. Os dez que saíram estão
+# listados no README, com o motivo de cada um. Vale a pena saber que dois deles
+# saíram depois de já estarem na coleção, por medida: uma filmagem aérea em que
+# o carro tem 120 pixels contra o piso de 700 do detector, e que por isso contava
+# 2 num viaduto cheio; e uma avenida com tanto pedestre na calçada que a conta
+# subia para 89. Nos dois casos o problema é do método, não do ajuste.
 COLECAO = (
     VideoDeExemplo(
         '01-rodovia-de-frente',
@@ -75,27 +82,17 @@ COLECAO = (
         'rua com carros parados dos dois lados, que o fundo aprende. Conta 8',
     ),
     VideoDeExemplo(
-        '06-viaduto',
-        '2022/03/05/109756-685086367_large.mp4',
-        'vista aérea alta: os veículos ficam pequenos e poucos são vistos. Conta 2',
-    ),
-    VideoDeExemplo(
-        '07-avenida-larga',
-        '2020/08/29/48504-454713939_large.mp4',
-        'avenida larga com muito movimento na calçada. Conta 89, provavelmente demais',
-    ),
-    VideoDeExemplo(
-        '08-via-movimentada',
+        '06-via-movimentada',
         '2019/05/15/23712-337108764_large.mp4',
         'trânsito denso visto de cima, veículos grandes na imagem. Conta 68',
     ),
     VideoDeExemplo(
-        '09-rua-comercial',
+        '07-rua-comercial',
         '2019/08/06/25816-352978422_large.mp4',
         'rua de comércio, veículos lentos e pedestres na calçada. Conta 7',
     ),
     VideoDeExemplo(
-        '10-rotatoria',
+        '08-rotatoria',
         '2021/05/27/75457-556022183_large.mp4',
         'rotatória vista de cima, trajetória curva. Conta 9',
     ),

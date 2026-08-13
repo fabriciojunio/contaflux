@@ -74,24 +74,17 @@ o download do projeto pesado para sempre. Eles são baixados na hora:
 python baixar_videos.py
 ```
 
-São dez vídeos de rodovia, todos do Pixabay, sob licença que permite uso livre.
+São oito vídeos de rodovia, todos do Pixabay, sob licença que permite uso livre.
 Se a internet cair no meio, rode o comando de novo: ele pula os que já vieram e
 baixa só o que falta.
 
-A coleção é variada de propósito, e nem todos são fáceis. Estes são os melhores
-para uma demonstração, porque os veículos aparecem grandes e a contagem
-acompanha bem o que se vê na tela:
+Todos foram conferidos um a um, e os que não contavam direito foram tirados da
+coleção em vez de maquiados. Estes três são os melhores para uma demonstração,
+porque os veículos aparecem grandes e a contagem acompanha o que se vê na tela:
 
+- `04-estrada-aberta` — o mais movimentado, 32 veículos
+- `06-via-movimentada` — trânsito denso visto de cima, 68 veículos
 - `01-rodovia-de-frente` — carros vindo em direção à câmera, 23 em um minuto
-- `04-estrada-aberta` — o mais movimentado da coleção, 32 veículos
-- `08-via-movimentada` — trânsito denso visto de cima, veículos grandes
-
-E estes mostram onde o método sofre, o que também vale mostrar:
-
-- `06-viaduto` — vista aérea alta, os veículos ficam pequenos e quase nenhum é
-  detectado
-- `07-avenida-larga` — muito movimento de pedestre na calçada entra na conta e
-  o número sai alto demais
 
 Você também pode usar **seus próprios vídeos**: é só copiar os arquivos para a
 pasta `videos`. Funciona com `.mp4`, `.avi`, `.mkv`, `.mov` e `.webm`.
@@ -110,10 +103,10 @@ Aparece a lista:
 Vídeos disponíveis:
 --------------------------------------------------------------
    1. 01-rodovia-de-frente.mp4  (1920x1080, 60s)
-   2. 03-rodovia-lateral.mp4    (1920x1080, 32s)
+   2. 02-rodovia-lateral.mp4  (3840x2160, 26s)
    ...
 --------------------------------------------------------------
-Qual vídeo? (1 a 10, ou q para sair):
+Qual vídeo? (1 a 8, ou q para sair):
 ```
 
 Digite o número e aperte Enter. **Pronto, não precisa fazer mais nada.**

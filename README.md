@@ -17,7 +17,7 @@ python -m contaflux 0           # conta ao vivo pela câmera
 python -m contaflux             # demonstração, sem precisar de vídeo
 ```
 
-Os dez vídeos de exemplo não vêm no repositório, para não deixá-lo pesado. Um
+Os oito vídeos de exemplo não vêm no repositório, para não deixá-lo pesado. Um
 comando os baixa:
 
 ```
