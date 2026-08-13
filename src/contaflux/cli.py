@@ -499,6 +499,11 @@ def executar(argumentos, saida=sys.stdout) -> Relatorio:
     if detector is not None:
         # O reconhecimento não aprende a cena, então não há o que aquecer.
         aquecimento = 0
+    else:
+        # As faixas de porte por área só entram quando não há reconhecimento.
+        # Com o modelo, o tipo vem dele, e ancorar por tamanho seria anunciar
+        # uma dedução que não acontece.
+        perfil = _ajustar_porte(perfil, observacao, saida)
 
     contador = ContadorDeFluxo(
         linha,
