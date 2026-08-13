@@ -116,15 +116,16 @@ Vídeos disponíveis:
 Qual vídeo? (1 a 10, ou q para sair):
 ```
 
-Digite o número e aperte Enter. Abre uma janela mostrando o primeiro quadro do
-vídeo, e você **marca a linha de contagem com dois cliques do mouse**:
+Digite o número e aperte Enter. **Pronto, não precisa fazer mais nada.**
 
-1. Clique de um lado da via
-2. Clique do outro lado, atravessando as faixas
-3. Aperte **Enter**
+O programa assiste alguns segundos do vídeo sozinho, vê por onde os carros
+passam e para onde vão, e coloca a linha de contagem atravessada no caminho
+deles. Aparece na tela algo assim:
 
-A linha aparece em amarelo enquanto você move o mouse, então dá para ver como
-vai ficar antes de confirmar. Se errar, aperte **R** e refaça.
+```
+Observando o tráfego para posicionar a linha...
+  104 veículos observados. Linha em 359,770 até 334,-222.
+```
 
 O vídeo começa a rodar com:
 
@@ -155,13 +156,17 @@ Duas dicas que fazem diferença:
   fora do trecho marcado não entra na conta. É assim que se ignora o sentido
   contrário.
 
-Se você não marcar nada, o programa **observa alguns segundos do vídeo e deduz a
-linha sozinho**, colocando-a perpendicular ao sentido do tráfego. Funciona na
-maioria dos casos e é o que acontece quando você roda sem o menu:
+Isso é o que o programa faz sozinho, e na maioria dos vídeos ele acerta. Você só
+precisa marcar à mão quando quiser algo específico, como contar apenas uma das
+pistas. Nesse caso:
 
 ```
-python -m contaflux videos/01-rodovia-de-frente.mp4
+python -m contaflux videos/01-rodovia-de-frente.mp4 --desenhar-linha
 ```
+
+Abre o primeiro quadro e você marca com dois cliques: um de cada lado da via, e
+Enter para confirmar. A linha aparece em amarelo acompanhando o mouse, e **R**
+refaz se errar.
 
 ---
 

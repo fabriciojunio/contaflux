@@ -554,10 +554,6 @@ def main(argv: list[str] | None = None) -> int:
             if escolhido is None:
                 return 0
             argumentos.fonte = str(escolhido)
-            # Quem entra pelo menu não vai digitar coordenadas, então a linha
-            # é desenhada com o mouse a menos que já tenha vindo pronta.
-            if not argumentos.linha:
-                argumentos.desenhar_linha = True
 
         executar(argumentos)
     except Cancelado:
