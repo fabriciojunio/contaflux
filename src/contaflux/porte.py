@@ -21,6 +21,21 @@ CARRO = 'carro'
 CAMINHAO = 'caminhão'
 DESCONHECIDO = 'desconhecido'
 
+FRACAO_DE_MOTO = 0.55
+"""Abaixo desta fração do veículo mediano, é moto.
+
+Uma moto vista de trás ocupa perto de um terço da área de um carro; de lado,
+perto de metade. Cinquenta e cinco por cento fica acima dos dois casos sem
+chegar perto do carro pequeno, que raramente desce de setenta por cento da
+mediana."""
+
+FRACAO_DE_CAMINHAO = 1.9
+"""Acima desta fração do veículo mediano, é caminhão.
+
+Um caminhão ou ônibus tem o dobro do comprimento de um carro e um pouco mais
+de altura, o que dá bem mais que o dobro de área. Um e nove deixa de fora a
+picape e a van grande, que são carros para efeito de contagem de tráfego."""
+
 
 @dataclass(frozen=True, slots=True)
 class FaixasDePorte:
@@ -34,6 +49,33 @@ class FaixasDePorte:
             raise ValueError('O limite de moto precisa ser positivo.')
         if self.ate_carro <= self.ate_moto:
             raise ValueError('O limite de carro precisa ser maior que o de moto.')
+
+    @classmethod
+    def relativas(cls, area_tipica: float) -> 'FaixasDePorte':
+        """Faixas ancoradas no tamanho que os veículos têm neste vídeo.
+
+        Limites em pixels absolutos só valem para a câmera em que foram
+        medidos. Numa câmera baixa, o carro que passa perto ocupa quinze mil
+        pixels e é classificado como caminhão; numa vista aérea, o caminhão
+        ocupa mil e vira moto. Foi exatamente o que apareceu ao rodar num vídeo
+        real: quinze dos vinte e três veículos saíram como caminhão, num vídeo
+        em que quase tudo era carro.
+
+        A âncora é a área mediana observada. Ela funciona porque carro é o
+        veículo mais comum em qualquer via: a mediana cai em cima dele, e as
+        outras duas classes se definem por proporção a partir dali.
+
+        O preço é conhecido e vale dizer: numa via só de caminhões, a mediana
+        vira caminhão e a classificação inteira escorrega. Para esse caso, e
+        para comparar vídeos entre si, as faixas fixas do perfil continuam
+        disponíveis.
+        """
+        if area_tipica <= 0:
+            raise ValueError('A área típica precisa ser positiva.')
+        return cls(
+            ate_moto=max(1, int(area_tipica * FRACAO_DE_MOTO)),
+            ate_carro=max(2, int(area_tipica * FRACAO_DE_CAMINHAO)),
+        )
 
     def classificar(self, area: int) -> str:
         """Nome da classe para uma área. Área não positiva vira desconhecido."""

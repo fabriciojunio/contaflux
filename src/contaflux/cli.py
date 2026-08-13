@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import argparse
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 import cv2
@@ -26,6 +26,7 @@ from contaflux.contagem import Linha
 from contaflux.desenho import anotar, lado_a_lado
 from contaflux.menu import escolher_video
 from contaflux.perfis import PERFIS, obter
+from contaflux.porte import FaixasDePorte
 from contaflux.pipeline import ContadorDeFluxo
 from contaflux.relatorio import Relatorio
 from contaflux.selecao import escolher_linha, primeiro_quadro_util
@@ -348,7 +349,7 @@ def _e_arquivo(fonte: str) -> bool:
     return fonte != 'demo' and not str(fonte).isdigit()
 
 
-def _linha_sugerida(argumentos, largura: int, altura: int, perfil, saida) -> Linha | None:
+def _linha_sugerida(argumentos, largura: int, altura: int, perfil, saida):
     """Observa alguns segundos do vídeo e deduz onde a linha deve ficar.
 
     Só vale para arquivo: a observação consome quadros, e num arquivo dá para
@@ -356,7 +357,7 @@ def _linha_sugerida(argumentos, largura: int, altura: int, perfil, saida) -> Lin
     passariam sem ser contados.
     """
     if not _e_arquivo(argumentos.fonte):
-        return None
+        return None, None
 
     print('Observando o tráfego para posicionar a linha...', file=saida)
     try:
@@ -365,7 +366,7 @@ def _linha_sugerida(argumentos, largura: int, altura: int, perfil, saida) -> Lin
                 fonte.quadros(), largura, altura, perfil, QUADROS_DE_OBSERVACAO
             )
     except FonteIndisponivel:
-        return None
+        return None, None
 
     if linha is None:
         print(
@@ -373,7 +374,7 @@ def _linha_sugerida(argumentos, largura: int, altura: int, perfil, saida) -> Lin
             'Usando uma vertical no meio do quadro.',
             file=saida,
         )
-        return None
+        return None, observacao
 
     print(
         f'  {observacao.total_de_alvos} veículos observados. '
@@ -381,13 +382,33 @@ def _linha_sugerida(argumentos, largura: int, altura: int, perfil, saida) -> Lin
         file=saida,
     )
     print('  Para escolher outra:  --desenhar-linha  ou  --linha x1,y1,x2,y2', file=saida)
-    return linha
+    return linha, observacao
 
 
-def _definir_linha(argumentos, largura: int, altura: int, perfil, saida) -> Linha:
-    """Linha informada, desenhada com o mouse, deduzida do tráfego, ou a padrão."""
+def _ajustar_porte(perfil, observacao, saida):
+    """Reancora as faixas de porte no tamanho que os veículos têm neste vídeo.
+
+    Os limites do perfil são pixels absolutos, medidos numa cena de referência.
+    Em vídeo real eles erram feio: num vídeo de câmera baixa, quinze dos vinte
+    e três veículos saíram como caminhão, sendo quase todos carro. A área
+    mediana observada dá a âncora certa para aquela câmera.
+    """
+    if observacao is None or observacao.area_tipica <= 0:
+        return perfil
+
+    faixas = FaixasDePorte.relativas(observacao.area_tipica)
+    print(
+        f'  Porte ancorado no veículo mediano deste vídeo '
+        f'({observacao.area_tipica:.0f} pixels).',
+        file=saida,
+    )
+    return replace(perfil, faixas=faixas)
+
+
+def _definir_linha(argumentos, largura: int, altura: int, perfil, saida):
+    """Devolve a linha e a observação do tráfego, quando houve uma."""
     if argumentos.linha:
-        return analisar_linha(argumentos.linha, largura, altura)
+        return analisar_linha(argumentos.linha, largura, altura), None
 
     if argumentos.desenhar_linha and argumentos.fonte != 'demo':
         quadro = primeiro_quadro_util(
@@ -403,14 +424,14 @@ def _definir_linha(argumentos, largura: int, altura: int, perfil, saida) -> Linh
                 f'{escolhida.x2:.0f},{escolhida.y2:.0f}',
                 file=saida,
             )
-            return escolhida
+            return escolhida, None
 
     if not argumentos.linha_fixa:
-        sugerida = _linha_sugerida(argumentos, largura, altura, perfil, saida)
+        sugerida, observacao = _linha_sugerida(argumentos, largura, altura, perfil, saida)
         if sugerida is not None:
-            return sugerida
+            return sugerida, observacao
 
-    return analisar_linha(None, largura, altura)
+    return analisar_linha(None, largura, altura), None
 
 
 def executar(argumentos, saida=sys.stdout) -> Relatorio:
@@ -419,7 +440,8 @@ def executar(argumentos, saida=sys.stdout) -> Relatorio:
     quadros, largura, altura = entrada.quadros, entrada.largura, entrada.altura
     fps, rotulo, esperado = entrada.fps, entrada.rotulo, entrada.esperado
     perfil = obter(argumentos.perfil)
-    linha = _definir_linha(argumentos, largura, altura, perfil, saida)
+    linha, observacao = _definir_linha(argumentos, largura, altura, perfil, saida)
+    perfil = _ajustar_porte(perfil, observacao, saida)
 
     escala = None
     if argumentos.metros:

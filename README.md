@@ -272,11 +272,18 @@ os primeiros segundos é aprendido como cenário e deixa de existir para a
 contagem. Um carro estacionado dentro do quadro na hora em que o programa
 começa não será contado quando sair.
 
-**Classificação por porte supõe enquadramento sem muita perspectiva.** A
-separação entre moto, carro e caminhão é por área na imagem, e ela funciona
-porque a câmera enquadra sempre a mesma faixa de pista. Num enquadramento em que
-o fundo da cena fica bem menor que a frente, a área sozinha deixa de bastar:
-seria preciso corrigir pela posição vertical antes de classificar.
+**A classificação por porte é a parte mais fraca, e não confie nela sob
+perspectiva forte.** A separação entre moto, carro e caminhão é por área na
+imagem. Os limites são ancorados no veículo mediano de cada vídeo, o que corrige
+a diferença entre câmeras, mas não corrige a diferença *dentro* de um mesmo
+vídeo: numa câmera baixa, o mesmo carro ocupa três vezes mais pixels ao chegar
+perto do que ao aparecer no fundo do quadro. Num vídeo de rodovia em que quase
+tudo era carro, dez dos vinte e três saíram como caminhão.
+
+Resolver de verdade exigiria corrigir a área pela posição vertical antes de
+classificar, calibrando a perspectiva da cena. Não está feito. **A contagem
+não depende disso** e continua correta: o porte é informação extra, e sob
+perspectiva forte é informação ruim.
 
 **Sombra sem dono pode virar veículo.** A regra que recupera veículos escuros
 trata como objeto qualquer região de movimento sem pixel de contraste alto.

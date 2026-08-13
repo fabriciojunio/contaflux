@@ -41,6 +41,56 @@ def test_faixas_validas_sao_aceitas(ate_moto, ate_carro):
 
 
 # --------------------------------------------------------------------------
+# Faixas ancoradas no vídeo
+# --------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize('area_tipica', [800, 2000, 4233, 12_000, 40_000])
+def test_faixas_relativas_colocam_o_mediano_em_carro(area_tipica):
+    """A âncora é o veículo mais comum da via, e ele tem que sair como carro."""
+    faixas = FaixasDePorte.relativas(area_tipica)
+    assert faixas.classificar(int(area_tipica)) == CARRO
+
+
+@pytest.mark.parametrize('area_tipica', [1000, 4000, 10_000])
+def test_metade_do_mediano_e_moto(area_tipica):
+    faixas = FaixasDePorte.relativas(area_tipica)
+    assert faixas.classificar(int(area_tipica * 0.4)) == MOTO
+
+
+@pytest.mark.parametrize('area_tipica', [1000, 4000, 10_000])
+def test_o_dobro_e_meio_do_mediano_e_caminhao(area_tipica):
+    faixas = FaixasDePorte.relativas(area_tipica)
+    assert faixas.classificar(int(area_tipica * 2.5)) == CAMINHAO
+
+
+@pytest.mark.parametrize('area_tipica', [0, -1, -5000])
+def test_area_tipica_invalida_e_recusada(area_tipica):
+    with pytest.raises(ValueError, match='positiva'):
+        FaixasDePorte.relativas(area_tipica)
+
+
+def test_as_faixas_relativas_acompanham_a_escala_da_camera():
+    """Duas câmeras diferentes classificam o mesmo veículo do mesmo jeito.
+
+    É o ponto todo: limite em pixel absoluto vale só para a câmera em que foi
+    medido, e numa câmera mais próxima todo carro vira caminhão.
+    """
+    perto = FaixasDePorte.relativas(12_000)
+    longe = FaixasDePorte.relativas(1_200)
+    assert perto.classificar(12_000) == longe.classificar(1_200) == CARRO
+    assert perto.classificar(30_000) == longe.classificar(3_000) == CAMINHAO
+
+
+@pytest.mark.parametrize('area_tipica', [1, 2, 3])
+def test_area_tipica_minuscula_ainda_gera_faixas_validas(area_tipica):
+    """Arredondar para zero deixaria a faixa inválida e derrubaria o programa."""
+    faixas = FaixasDePorte.relativas(area_tipica)
+    assert faixas.ate_moto >= 1
+    assert faixas.ate_carro > faixas.ate_moto
+
+
+# --------------------------------------------------------------------------
 # Classificação
 # --------------------------------------------------------------------------
 
