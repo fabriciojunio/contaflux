@@ -138,11 +138,13 @@ Na janela: **espaço** pausa, **q** encerra.
 
 ---
 
-## 4. Onde colocar a linha
+## 4. A linha de contagem
 
-Ela precisa ficar **atravessada no caminho dos carros**, não junto com ele.
+O programa a posiciona sozinho, e o resto desta seção só interessa se você
+quiser mudá-la. Ela fica **atravessada no caminho dos carros**, nunca junto com
+ele.
 
-| A via aparece assim | Desenhe a linha assim |
+| A via aparece assim | A linha fica assim |
 |---|---|
 | carros vindo de frente, em direção à câmera | horizontal, cruzando a pista |
 | carros passando de um lado para o outro | vertical, cruzando a pista |
@@ -152,7 +154,7 @@ Duas dicas que fazem diferença:
 
 - **Coloque a linha onde os carros já estão grandes na imagem.** Lá no fundo do
   quadro eles têm poucos pixels e o sistema pode não enxergá-los.
-- **Para contar só uma pista**, desenhe a linha cobrindo apenas ela. O que passa
+- **Para contar só uma pista**, marque a linha cobrindo apenas ela. O que passa
   fora do trecho marcado não entra na conta. É assim que se ignora o sentido
   contrário.
 
@@ -231,11 +233,12 @@ marcando a caixa "Add Python to PATH", ou use `py` no lugar de `python`.
 (servidor, WSL sem X). Use `--sem-janela --csv resultado.csv`.
 
 **A contagem parece alta demais** — quase sempre é a linha atravessando algo que
-se mexe e não é veículo: galho de árvore, sombra de nuvem, bandeira. Redesenhe
-a linha cobrindo só o asfalto.
+se mexe e não é veículo: pedestre na calçada, galho de árvore, sombra de nuvem.
+Use `--desenhar-linha` e marque só o trecho de asfalto.
 
-**A contagem parece baixa demais** — a linha provavelmente está numa parte do
-quadro onde os carros ainda são pequenos. Traga-a para mais perto da câmera.
+**A contagem parece baixa demais** — a linha provavelmente caiu numa parte do
+quadro onde os carros ainda são pequenos. Use `--desenhar-linha` e marque mais
+perto da câmera.
 
 **"Não foi possível usar a câmera"** — outro programa pode estar usando (Teams,
 Meet, Zoom). Feche e tente de novo. No Windows, confira também em
@@ -251,7 +254,7 @@ ajuste: sem fundo fixo não há como separar o que se move.
 
 | Comando | O que faz |
 |---|---|
-| `python -m contaflux --menu` | escolhe o vídeo pela lista e marca a linha no mouse |
+| `python -m contaflux --menu` | escolhe o vídeo pela lista e conta sozinho |
 | `python -m contaflux arquivo.mp4` | conta um vídeo, deduzindo a linha sozinho |
 | `python -m contaflux 0` | conta pela câmera ao vivo |
 | `python -m contaflux` | roda a demonstração, sem precisar de vídeo |
