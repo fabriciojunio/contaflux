@@ -183,6 +183,56 @@ gerar  6,1s    contar 4,1s
 Meio tom de precisão não muda nada numa imagem de oito bits, e a suíte inteira
 ficou praticável.
 
+## O que o vídeo real mostrou que a cena sintética escondia
+
+A cena sintética validou o algoritmo, e não a operação. Rodar em dez vídeos de
+rodovia de verdade expôs três coisas que nenhum teste sintético pegaria.
+
+**A taxa de quadros não chegava ao relatório.** Ela só existia dentro da escala
+de velocidade, que é opcional. Num vídeo de 50 quadros por segundo sem
+`--metros`, todos os horários saíam dobrados: o relatório marcava 63 segundos
+num vídeo de 60. O gerador de cenas usa 25 quadros por segundo, que era
+justamente o valor assumido por omissão, então o erro nunca apareceu.
+
+**O aquecimento era contado em quadros, não em tempo.** Quarenta e cinco
+quadros a 50 por segundo dão menos de um segundo de cena vazia:
+
+| aquecimento | total contado | travessias nos 8 s seguintes |
+|---|---|---|
+| 0,9 s | 37 | 12 |
+| 2,0 s | 34 | 10 |
+| 3,0 s | 30 | 6 |
+| 5,0 s | 26 | 2 |
+| 7,0 s | 26 | 3 |
+| 10,0 s | 24 | 3 |
+
+O total para de cair em torno de 5 segundos, que é a janela de histórico do
+modelo de fundo. O excedente era artefato: contagens fantasma geradas enquanto o
+modelo ainda não tinha aprendido a pista.
+
+**A linha padrão estava errada na maioria dos vídeos.** A vertical no meio do
+quadro só serve para câmera lateral. Em câmera baixa, os veículos vêm em direção
+à lente e a linha precisa ser horizontal; em pista curva, diagonal. Isso motivou
+a dedução automática descrita no README.
+
+## Por que oito dos dezoito vídeos foram descartados
+
+A coleção começou com dezoito e ficou em dez. Os descartes delimitam onde o
+método funciona, e por isso valem registro:
+
+| motivo | quantos | por que não tem conserto |
+|---|---|---|
+| dashcam ou drone | 3 | a câmera se move, e todo o método parte de fundo fixo |
+| timelapse noturno | 1 | cada veículo vira um rastro contínuo, não um objeto |
+| tomada aérea distante | 3 | o veículo fica com poucos pixels, abaixo do piso de área |
+| sem via no enquadramento | 1 | não há o que contar |
+
+Vale notar uma tentativa que falhou: medir movimento de câmera por correlação de
+fase entre quadros. Ela acusa translação, e dashcam apontada para a frente
+produz expansão radial, não translação. O vídeo de dashcam passou no teste com
+0,264 pixel por quadro, dentro da faixa dos vídeos de câmera fixa. A triagem
+acabou sendo feita a olho, olhando um quadro de cada vídeo.
+
 ## O que não foi testado
 
 Vídeo real com gabarito contado à mão. A validação é exata, o que vídeo real não
