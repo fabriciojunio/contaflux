@@ -90,12 +90,18 @@ def veiculos_regulares(
     intervalo: int = 26,
     sentido: int = 1,
     semente: int | None = None,
+    inicio: int = 20,
 ) -> list[Veiculo]:
     """Fila de carros espaçados, com tamanho, cor e velocidade variados.
 
     As três faixas de altura não são enfeite: veículos em faixas diferentes se
     cruzam na imagem e é aí que a sombra de um encosta no outro, que é o modo
     de falhar mais comum deste tipo de contador.
+
+    `inicio` é o quadro em que o primeiro veículo entra. Ele existe para a cena
+    poder começar com pista vazia: quando o vídeo gerado é gravado em arquivo e
+    contado depois como vídeo comum, os primeiros segundos são descartados no
+    aquecimento do modelo de fundo, e quem passar nesse intervalo não é contado.
     """
     gerador = np.random.default_rng(semente if semente is not None else parametros.semente)
     faixas = [int(parametros.altura * f) for f in (0.42, 0.58, 0.72)]
@@ -106,7 +112,7 @@ def veiculos_regulares(
         altura = int(gerador.integers(26, 40))
         veiculos.append(
             Veiculo(
-                entrada_quadro=20 + i * intervalo,
+                entrada_quadro=inicio + i * intervalo,
                 y=faixas[i % len(faixas)] - altura // 2,
                 largura=largura,
                 altura=altura,

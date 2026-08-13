@@ -218,8 +218,11 @@ def analisar_linha(texto: str | None, largura: int, altura: int) -> Linha:
 INTERVALO_DA_DEMONSTRACAO = 26
 """Quadros entre a entrada de um veículo e a do seguinte."""
 
+FPS_DA_DEMONSTRACAO = 25.0
+"""Taxa da cena sintética, usada para dimensionar a folga inicial do vídeo gravado."""
 
-def _cena_de_demonstracao(quantidade: int) -> GeradorDeCena:
+
+def _cena_de_demonstracao(quantidade: int, inicio: int = 20) -> GeradorDeCena:
     """Cena sintética com duração ajustada à quantidade de veículos.
 
     A duração é calculada, e não fixa, porque uma demonstração com três carros
@@ -227,12 +230,16 @@ def _cena_de_demonstracao(quantidade: int) -> GeradorDeCena:
     vazia. Ela é a soma do que o último veículo espera para entrar com o tempo
     de atravessar o quadro, mais uma folga.
     """
-    entrada_do_ultimo = 20 + max(0, quantidade - 1) * INTERVALO_DA_DEMONSTRACAO
+    entrada_do_ultimo = inicio + max(0, quantidade - 1) * INTERVALO_DA_DEMONSTRACAO
     quadros = max(200, entrada_do_ultimo + 160)
 
     parametros = ParametrosCena(quadros=quadros, semente=12, oscilacao_luz=0.03)
     parametros.veiculos = veiculos_regulares(
-        quantidade, parametros, intervalo=INTERVALO_DA_DEMONSTRACAO, semente=12
+        quantidade,
+        parametros,
+        intervalo=INTERVALO_DA_DEMONSTRACAO,
+        semente=12,
+        inicio=inicio,
     )
     return GeradorDeCena(parametros)
 
@@ -312,8 +319,16 @@ def salvar_cena_de_demonstracao(argumentos, saida=sys.stdout) -> Path:
 
     Serve para exercitar o caminho de arquivo sem precisar filmar uma rodovia:
     grava, e em seguida `contaflux o_arquivo.mp4` conta em cima dele.
+
+    A cena gravada começa com pista vazia, o que a mostrada na tela não faz. É
+    proposital: contado como arquivo comum, o vídeo perde os primeiros segundos
+    no aquecimento do modelo de fundo, e sem essa folga os primeiros veículos
+    passariam sem ser contados. O problema apareceu na integração contínua, com
+    o vídeo gravado devolvendo 5 de 6.
     """
-    cena = _cena_de_demonstracao(argumentos.demo_veiculos)
+    cena = _cena_de_demonstracao(
+        argumentos.demo_veiculos, inicio=int(FPS_DA_DEMONSTRACAO * SEGUNDOS_DE_AQUECIMENTO) + 20
+    )
     destino = Path(argumentos.salvar_demo)
     destino.parent.mkdir(parents=True, exist_ok=True)
     cena.gravar(str(destino))
