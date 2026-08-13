@@ -9,11 +9,28 @@ que troca no meio da travessia.
 
 from __future__ import annotations
 
+import unicodedata
+
 import cv2
 import numpy as np
 
 from contaflux.contagem import Contagem, Linha
 from contaflux.rastreio import Alvo
+
+def sem_acento(texto: str) -> str:
+    """Texto que o OpenCV consegue desenhar.
+
+    A função de escrita do OpenCV só desenha ASCII: "caminhão" sai na tela como
+    "caminh??o", e foi exatamente o que apareceu no vídeo anotado. O acento é
+    removido apenas aqui, na hora de desenhar. O relatório, o CSV e o JSON
+    continuam com a grafia certa, porque ali nada impede.
+    """
+    return (
+        unicodedata.normalize('NFKD', texto)
+        .encode('ascii', 'ignore')
+        .decode('ascii')
+    )
+
 
 VERDE = (80, 220, 100)
 AMARELO = (60, 200, 240)
@@ -35,6 +52,7 @@ def _texto_com_fundo(
     Sem a tarja, o texto some quando passa por cima de um carro claro, que é
     justamente o momento em que alguém está olhando para ele.
     """
+    texto = sem_acento(texto)
     (largura, altura), base = cv2.getTextSize(texto, FONTE, escala, 1)
     x, y = posicao
     cv2.rectangle(imagem, (x - 3, y - altura - 4), (x + largura + 3, y + base), PRETO, -1)

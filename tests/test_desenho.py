@@ -204,3 +204,42 @@ def test_lado_a_lado_redimensiona_mascara_de_outro_tamanho(quadro):
 def test_lado_a_lado_aceita_mascara_ja_colorida(quadro):
     mascara = np.zeros((360, 640, 3), dtype=np.uint8)
     assert lado_a_lado(quadro, mascara).shape == (360, 1280, 3)
+
+
+# --------------------------------------------------------------------------
+# Acentos na tela
+# --------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    'com_acento,esperado',
+    [
+        ('caminhão', 'caminhao'),
+        ('ônibus', 'onibus'),
+        ('veículos', 'veiculos'),
+        ('saídas', 'saidas'),
+        ('média: 74 km/h', 'media: 74 km/h'),
+        ('carro', 'carro'),
+    ],
+)
+def test_acento_e_removido_para_desenhar(com_acento, esperado):
+    """A escrita do OpenCV só desenha ASCII, e "caminhão" saía como "caminh??o".
+
+    O acento cai só na hora de desenhar. Relatório, CSV e JSON continuam com a
+    grafia certa, e há testes desses formatos exigindo o acento.
+    """
+    from contaflux.desenho import sem_acento
+
+    assert sem_acento(com_acento) == esperado
+
+
+def test_etiqueta_acentuada_nao_quebra_o_desenho(quadro):
+    from contaflux.desenho import desenhar_alvos
+
+    desenhar_alvos(quadro, {1: alvo()}, rotulos={1: '#1 caminhão 82 km/h'})
+
+
+def test_painel_com_rotulo_acentuado_nao_quebra(quadro):
+    from contaflux.desenho import desenhar_painel
+
+    desenhar_painel(quadro, Contagem(entradas=2), rotulo_positivo='saídas')
