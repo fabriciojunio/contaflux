@@ -46,6 +46,7 @@ class ContadorDeFluxo:
         linha: Linha,
         perfil: Perfil = PADRAO,
         escala: Escala | None = None,
+        fps: float = 25.0,
         detector: DetectorDeMovimento | None = None,
         rastreador: Rastreador | None = None,
         quadros_de_aquecimento: int = 45,
@@ -58,9 +59,17 @@ class ContadorDeFluxo:
         `escala` só é necessária para estimar velocidade. Sem ela o sistema
         conta normalmente e deixa a velocidade em branco, que é melhor do que
         inventar uma conversão de pixel para metro que ninguém mediu.
+
+        `fps` é a taxa do vídeo, usada para converter quadro em segundo no
+        relatório. Ela é separada da escala porque saber a hora de cada
+        passagem não depende de calibrar distância: a primeira versão só tinha
+        a taxa dentro da escala, e um vídeo de 50 quadros por segundo sem
+        `--metros` saía com todos os horários dobrados, marcando 63 segundos
+        num vídeo de 60.
         """
         self.perfil = perfil
         self.escala = escala
+        self.fps = escala.fps if escala is not None else fps
         self.detector = detector or DetectorDeMovimento(
             area_minima=perfil.area_minima,
             area_maxima=perfil.area_maxima,
@@ -126,7 +135,7 @@ class ContadorDeFluxo:
         if len(eventos) == self._eventos_vistos:
             return []
 
-        fps = self.escala.fps if self.escala else 25.0
+        fps = self.fps
         novas: list[Passagem] = []
 
         for identificador, sentido, quadro in eventos[self._eventos_vistos :]:
@@ -182,7 +191,7 @@ class ContadorDeFluxo:
         return Relatorio(
             fonte=fonte,
             quadros_processados=self._indice,
-            fps=self.escala.fps if self.escala else 25.0,
+            fps=self.fps,
             passagens=list(self.passagens),
         )
 
