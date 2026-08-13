@@ -5,10 +5,23 @@ Cada carro é acompanhado quadro a quadro e contado uma única vez, no instante 
 que atravessa uma linha desenhada na cena. Além do total, o programa separa por
 sentido, classifica por porte e estima velocidade.
 
+Trabalho de Processamento de Imagens e Sinais, feito por Fabrício Júnio Almeida
+Dias, Camila Pereira Raimundo, Luan Miranda Padilha e Kauã Limão Nunes.
+
+**Para instalar e usar passo a passo, veja o [TUTORIAL.md](TUTORIAL.md).**
+
 ```
-contaflux                      # demonstração, sem precisar de vídeo
-contaflux rodovia.mp4          # conta um vídeo de rodovia
-contaflux 0                    # conta ao vivo pela câmera
+python -m contaflux --menu      # escolhe o vídeo pela lista e marca a linha no mouse
+python -m contaflux rodovia.mp4 # conta um vídeo de rodovia
+python -m contaflux 0           # conta ao vivo pela câmera
+python -m contaflux             # demonstração, sem precisar de vídeo
+```
+
+Os dez vídeos de exemplo não vêm no repositório, para não deixá-lo pesado. Um
+comando os baixa:
+
+```
+python baixar_videos.py
 ```
 
 Uma janela abre mostrando a linha de contagem, uma caixa em volta de cada
@@ -194,14 +207,27 @@ Requer Python 3.10 ou mais novo. As únicas dependências são NumPy e OpenCV.
 | `--sem-janela` | processa em lote, sem interface |
 | `--largura N` | reduz o vídeo antes de processar |
 | `--salvar-demo arquivo.mp4` | grava a cena sintética como vídeo |
+| `--menu` | escolhe o vídeo pela lista da pasta |
+| `--desenhar-linha` | marca a linha com dois cliques do mouse |
+| `--linha-fixa` | não deduz a linha; usa a vertical do meio |
 
 Na janela, espaço pausa e `q` encerra.
 
 ### Onde colocar a linha
 
-Sem `--linha`, ela nasce vertical no meio do quadro, porque a maioria das
-câmeras de via filma o trânsito passando de lado. Para outra posição, quatro
-números em pixels:
+Há três formas, e a ordem de preferência é esta:
+
+**1. Deixar o programa deduzir.** É o que acontece quando você não diz nada. Ele
+observa alguns segundos, vê por onde os veículos passam e para onde vão, e
+coloca a linha perpendicular ao sentido do tráfego. É o que faz o sistema
+funcionar num vídeo que ninguém calibrou antes.
+
+**2. Desenhar com o mouse.** `--desenhar-linha` abre o primeiro quadro e você
+marca dois cliques. É o caminho quando você quer contar só uma pista, ou quando
+a dedução automática não acertou.
+
+**3. Informar em números.** Quatro coordenadas em pixels, para repetir
+exatamente a mesma medição depois:
 
 ```
 contaflux rodovia.mp4 --linha 400,100,400,600
@@ -277,11 +303,17 @@ src/contaflux/
   perfis.py       calibração por tipo de cena
   porte.py        classificação moto, carro e caminhão
   velocidade.py   estimativa por trajetória
+  sugestao.py     deduz sozinho onde a linha deve ficar
+  selecao.py      desenho da linha com o mouse
+  menu.py         escolha do vídeo pela lista
   cena.py         gerador de cenas sintéticas com gabarito
   video.py        leitura de arquivo e de câmera
   desenho.py      anotação visual
   relatorio.py    CSV, JSON e resumo
   cli.py          linha de comando
+
+baixar_videos.py  baixa a coleção de vídeos de exemplo
+empacotar.py      gera o executável
 ```
 
 ## Licença
