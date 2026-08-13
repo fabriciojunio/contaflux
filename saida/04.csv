@@ -1,0 +1,10 @@
+id,quadro,segundo,sentido,classe,velocidade_kmh
+1,56,2.34,sentido B,carro,
+12,118,4.92,sentido B,carro,
+9,188,7.84,sentido B,carro,
+22,202,8.43,sentido B,caminhão,
+25,217,9.05,sentido B,carro,
+26,295,12.3,sentido A,carro,
+30,329,13.72,sentido B,carro,
+32,335,13.97,sentido B,carro,
+24,378,15.77,sentido B,moto,
