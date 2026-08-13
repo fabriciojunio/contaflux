@@ -74,16 +74,43 @@ o download do projeto pesado para sempre. Eles são baixados na hora:
 python baixar_videos.py
 ```
 
-São três vídeos de rodovia, todos do Pixabay, sob licença que permite uso livre.
+São cinco vídeos de rodovia, todos do Pixabay, sob licença que permite uso livre.
 Se a internet cair no meio, rode o comando de novo: ele pula os que já vieram e
 baixa só o que falta.
 
 Cada um foi conferido olhando a tela, e não só o número: as caixas de detecção
-precisam cair em cima dos veículos e em mais nada. A coleção começou com
-dezoito e ficou em três por causa desse critério.
+precisam cair em cima dos veículos e em mais nada.
 
-O `01-rodovia-de-frente` é o melhor para demonstrar: a pista preenche o quadro,
-os carros aparecem grandes e não há céu nem água para confundir o detector.
+O `01-rodovia-de-frente` é o melhor para demonstrar, porque os carros passam
+bem perto da câmera. Já o `04-rua-com-arvores` e o `05-rodovia-urbana` estão na
+coleção de propósito: têm prédio, árvore e a cidade inteira ao fundo, e servem
+para mostrar que o entorno não vira contagem.
+
+---
+
+## 2.1 Ligar o reconhecimento de veículo
+
+Esta parte é opcional e vale muito a pena. Sem ela, o programa acha os veículos
+pelo movimento, o que funciona em pista limpa mas confunde nuvem, sombra e
+pedestre com carro. Com ela, ele reconhece o veículo:
+
+```
+pip install ultralytics
+```
+
+Na primeira execução ele baixa o modelo sozinho, cerca de 6 MB. Depois disso
+funciona sem internet. Para conferir qual está em uso, olhe a primeira linha
+que o programa imprime:
+
+```
+Detectando por reconhecimento de veículo (YOLO).
+```
+
+Sem placa de vídeo é mais lento, cerca de seis vezes. Se quiser a versão rápida
+sem reconhecimento, use `--detector movimento`.
+
+**O executável não traz o reconhecimento**, porque ele sozinho somaria quase um
+gigabyte. Quem quiser essa parte roda pelo Python.
 
 Você também pode usar **seus próprios vídeos**: é só copiar os arquivos para a
 pasta `videos`. Funciona com `.mp4`, `.avi`, `.mkv`, `.mov` e `.webm`.
@@ -105,7 +132,7 @@ Vídeos disponíveis:
    2. 02-rodovia-lateral.mp4  (3840x2160, 26s)
    ...
 --------------------------------------------------------------
-Qual vídeo? (1 a 3, ou q para sair):
+Qual vídeo? (1 a 5, ou q para sair):
 ```
 
 Digite o número e aperte Enter. **Pronto, não precisa fazer mais nada.**
@@ -257,6 +284,8 @@ ajuste: sem fundo fixo não há como separar o que se move.
 | `--metros 30` | liga a estimativa de velocidade |
 | `--sem-janela` | processa sem abrir janela |
 | `--mascara` | mostra ao lado o que o sistema enxerga como movimento |
+| `--detector yolo` | força o reconhecimento de veículo |
+| `--detector movimento` | força a subtração de fundo, que é mais rápida |
 
 Para ver tudo:
 
