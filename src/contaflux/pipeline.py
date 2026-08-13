@@ -181,7 +181,11 @@ class ContadorDeFluxo:
         saida: dict[int, str] = {}
         for identificador, alvo in alvos.items():
             partes = [f'#{identificador}']
-            classe = self.classes.get(identificador)
+            # O tipo vem do alvo, e não só da lista de já contados. Quando o
+            # detector reconhece o veículo, ele sabe o tipo desde o primeiro
+            # quadro, e esconder isso até a travessia deixava a tela cheia de
+            # caixa numerada sem dizer o que era cada uma.
+            classe = alvo.classe or self.classes.get(identificador)
             if classe and classe != DESCONHECIDO:
                 partes.append(classe)
             if self.escala is not None:
