@@ -29,7 +29,7 @@ from contaflux.perfis import PERFIS, obter
 from contaflux.porte import FaixasDePorte
 from contaflux.pipeline import ContadorDeFluxo
 from contaflux.relatorio import Relatorio
-from contaflux.selecao import escolher_linha, primeiro_quadro_util
+from contaflux.selecao import escolher_linha, listar_videos, primeiro_quadro_util
 from contaflux.deteccao_yolo import DetectorYolo, UltralyticsIndisponivel
 from contaflux.sugestao import sugerir_linha
 from contaflux.velocidade import Escala
@@ -104,6 +104,39 @@ def preparar_console() -> None:
             fluxo.reconfigure(encoding='utf-8')
         except (AttributeError, ValueError, OSError):
             pass
+
+
+def pasta_ao_lado_do_executavel(pasta: str) -> str:
+    """A pasta de vídeos vista de onde o executável está, não do diretório atual.
+
+    Quem dá dois cliques no `Contaflux.exe` quase nunca está com um terminal
+    aberto na pasta dele, e o diretório atual pode ser a área de trabalho ou
+    qualquer outro lugar. Procurar `videos` ao lado do próprio arquivo é o que
+    faz "copiar os vídeos para a pasta e abrir o programa" funcionar.
+    """
+    if Path(pasta).is_absolute():
+        return pasta
+    return str(Path(sys.executable).parent / pasta)
+
+
+def pasta_para_menu_automatico(argumentos: argparse.Namespace) -> str | None:
+    """Onde oferecer o menu quando o executável foi aberto sem argumento nenhum.
+
+    Dois cliques não passam argumento, então o programa cairia na demonstração.
+    Ela serve para conferir que a instalação está de pé, mas quem já copiou os
+    vídeos para a pasta quer contá-los, e não ver a cena sintética. Sem vídeo ao
+    lado do executável, a demonstração continua sendo o que acontece.
+
+    Nada disso vale rodando pelo Python: lá `contaflux` sem argumento é a
+    demonstração, como está documentado, e quem quer a lista pede `--menu`.
+    """
+    if not getattr(sys, 'frozen', False) or len(sys.argv) > 1:
+        return None
+    if argumentos.menu or argumentos.fonte != 'demo':
+        return None
+
+    pasta = pasta_ao_lado_do_executavel(argumentos.pasta)
+    return pasta if listar_videos(pasta) else None
 
 
 def construir_parser() -> argparse.ArgumentParser:
@@ -602,8 +635,9 @@ def main(argv: list[str] | None = None) -> int:
             salvar_cena_de_demonstracao(argumentos)
             return 0
 
-        if argumentos.menu:
-            escolhido = escolher_video(argumentos.pasta)
+        pasta = argumentos.pasta if argumentos.menu else pasta_para_menu_automatico(argumentos)
+        if pasta is not None:
+            escolhido = escolher_video(pasta)
             if escolhido is None:
                 return 0
             argumentos.fonte = str(escolhido)
