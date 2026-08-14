@@ -7,12 +7,22 @@ nos vídeos. São dez minutos, a maior parte esperando download.
 
 ## Caminho rápido: só quero ver funcionando
 
-Se o executável já estiver na mão (`Contaflux.exe`), dê dois cliques nele. Ele
-abre uma janela com uma rodovia simulada, conta os veículos e no fim diz se a
-contagem bateu com o número certo. Não precisa instalar nada.
+Baixe o `Contaflux.exe` em
+[github.com/fabriciojunio/contaflux/releases](https://github.com/fabriciojunio/contaflux/releases/latest)
+e dê dois cliques nele. Ele abre uma janela com uma rodovia simulada, conta os
+veículos e no fim diz se a contagem bateu com o número certo. Não precisa
+instalar nada.
 
-Esse caminho serve para verificar que está tudo bem. Para contar vídeos de
-verdade, siga abaixo.
+O Windows costuma mostrar um aviso de "aplicativo não reconhecido", porque o
+arquivo não tem assinatura digital paga. Clique em **Mais informações** e depois
+em **Executar assim mesmo**.
+
+Para contar seus próprios vídeos pelo executável, crie uma pasta `videos` ao
+lado dele, coloque os arquivos dentro e escolha a opção de menu correspondente.
+
+Esse caminho serve para verificar que está tudo bem e para apresentar em
+qualquer computador. Para o sistema completo, com reconhecimento de veículo,
+siga abaixo.
 
 ---
 
