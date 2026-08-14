@@ -13,6 +13,8 @@ from contaflux.cli import (
     construir_parser,
     executar,
     main,
+    pasta_ao_lado_do_executavel,
+    pasta_para_menu_automatico,
     preparar_console,
     salvar_cena_de_demonstracao,
 )
@@ -291,3 +293,71 @@ def test_preparar_console_nao_quebra_em_nenhum_sistema():
     """Ele mexe em detalhe de console do Windows e precisa ser inofensivo fora dele."""
     preparar_console()
     preparar_console()
+
+
+# --------------------------------------------------------------------------
+# Abrir o executável com dois cliques
+# --------------------------------------------------------------------------
+
+
+def empacotado(monkeypatch, executavel, argv=None):
+    """Finge que estamos rodando pelo executável, e não pelo Python."""
+    monkeypatch.setattr('sys.frozen', True, raising=False)
+    monkeypatch.setattr('sys.executable', str(executavel))
+    monkeypatch.setattr('sys.argv', argv or [str(executavel)])
+
+
+def test_a_pasta_de_videos_e_procurada_ao_lado_do_executavel(monkeypatch, tmp_path):
+    """Dois cliques não deixam o diretório atual na pasta do programa."""
+    empacotado(monkeypatch, tmp_path / 'Contaflux.exe')
+    assert pasta_ao_lado_do_executavel('videos') == str(tmp_path / 'videos')
+
+
+def test_pasta_absoluta_e_respeitada_como_veio(monkeypatch, tmp_path):
+    empacotado(monkeypatch, tmp_path / 'Contaflux.exe')
+    absoluta = str(tmp_path / 'outra')
+    assert pasta_ao_lado_do_executavel(absoluta) == absoluta
+
+
+def test_executavel_aberto_sem_argumento_oferece_os_videos_da_pasta(monkeypatch, tmp_path):
+    """Quem já copiou os vídeos quer contá-los, não ver a cena sintética."""
+    empacotado(monkeypatch, tmp_path / 'Contaflux.exe')
+    videos = tmp_path / 'videos'
+    videos.mkdir()
+    (videos / 'rodovia.mp4').write_bytes(b'')
+
+    assert pasta_para_menu_automatico(construir_parser().parse_args([])) == str(videos)
+
+
+def test_sem_video_ao_lado_do_executavel_a_demonstracao_continua(monkeypatch, tmp_path):
+    empacotado(monkeypatch, tmp_path / 'Contaflux.exe')
+    assert pasta_para_menu_automatico(construir_parser().parse_args([])) is None
+
+
+def test_pasta_de_videos_vazia_tambem_cai_na_demonstracao(monkeypatch, tmp_path):
+    empacotado(monkeypatch, tmp_path / 'Contaflux.exe')
+    (tmp_path / 'videos').mkdir()
+    assert pasta_para_menu_automatico(construir_parser().parse_args([])) is None
+
+
+def test_executavel_com_argumento_nao_abre_o_menu(monkeypatch, tmp_path):
+    """`Contaflux.exe --sem-janela --csv saida.csv` precisa continuar em lote."""
+    executavel = tmp_path / 'Contaflux.exe'
+    empacotado(monkeypatch, executavel, argv=[str(executavel), '--sem-janela'])
+    videos = tmp_path / 'videos'
+    videos.mkdir()
+    (videos / 'rodovia.mp4').write_bytes(b'')
+
+    argumentos = construir_parser().parse_args(['--sem-janela'])
+    assert pasta_para_menu_automatico(argumentos) is None
+
+
+def test_rodando_pelo_python_sem_argumento_continua_na_demonstracao(monkeypatch, tmp_path):
+    """Pelo Python, `contaflux` sem argumento é a demonstração, como documentado."""
+    monkeypatch.setattr('sys.frozen', False, raising=False)
+    monkeypatch.chdir(tmp_path)
+    videos = tmp_path / 'videos'
+    videos.mkdir()
+    (videos / 'rodovia.mp4').write_bytes(b'')
+
+    assert pasta_para_menu_automatico(construir_parser().parse_args([])) is None
