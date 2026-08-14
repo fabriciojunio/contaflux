@@ -8,7 +8,10 @@ sentido, classifica por porte e estima velocidade.
 Trabalho de Processamento de Imagens e Sinais, feito por Fabrício Júnio Almeida
 Dias, Camila Pereira Raimundo, Luan Miranda Padilha e Kauã Limão Nunes.
 
-**Para instalar e usar passo a passo, veja o [TUTORIAL.md](TUTORIAL.md).**
+**Para instalar e usar passo a passo, veja o [TUTORIAL.md](TUTORIAL.md).** Quem
+só quer ver rodando pode baixar o `Contaflux.exe` em
+[releases](https://github.com/fabriciojunio/contaflux/releases/latest) e dar dois
+cliques, sem instalar nada.
 
 ```
 python -m contaflux --menu      # escolhe o vídeo pela lista e marca a linha no mouse
@@ -303,18 +306,25 @@ os primeiros segundos é aprendido como cenário e deixa de existir para a
 contagem. Um carro estacionado dentro do quadro na hora em que o programa
 começa não será contado quando sair.
 
-**A classificação por porte é a parte mais fraca, e não confie nela sob
-perspectiva forte.** A separação entre moto, carro e caminhão é por área na
-imagem. Os limites são ancorados no veículo mediano de cada vídeo, o que corrige
-a diferença entre câmeras, mas não corrige a diferença *dentro* de um mesmo
-vídeo: numa câmera baixa, o mesmo carro ocupa três vezes mais pixels ao chegar
-perto do que ao aparecer no fundo do quadro. Num vídeo de rodovia em que quase
-tudo era carro, dez dos vinte e três saíram como caminhão.
+**Sem reconhecimento, a classificação por porte é a parte mais fraca, e não
+confie nela sob perspectiva forte.** No modo de subtração de fundo, a separação
+entre moto, carro e caminhão é por área na imagem. Os limites são ancorados no
+veículo mediano de cada vídeo, o que corrige a diferença entre câmeras, mas não
+corrige a diferença *dentro* de um mesmo vídeo: numa câmera baixa, o mesmo carro
+ocupa três vezes mais pixels ao chegar perto do que ao aparecer no fundo do
+quadro. Num vídeo de rodovia em que quase tudo era carro, dez dos vinte e três
+saíram como caminhão.
 
-Resolver de verdade exigiria corrigir a área pela posição vertical antes de
-classificar, calibrando a perspectiva da cena. Não está feito. **A contagem
-não depende disso** e continua correta: o porte é informação extra, e sob
-perspectiva forte é informação ruim.
+Resolver isso por área exigiria calibrar a perspectiva da cena, corrigindo a
+área pela posição vertical antes de classificar. Não está feito, e não precisou
+ser: com `pip install ultralytics` o tipo passa a vir do reconhecimento, que sabe
+distinguir carro de caminhão sem depender do tamanho na imagem. **A contagem não
+depende disso** nos dois modos: o porte é informação extra, e sob perspectiva
+forte, deduzido só por área, é informação ruim.
+
+**Veículo pequeno demais no quadro escapa do reconhecimento.** Em vista aérea ou
+com a câmera muito longe da via, o carro tem poucas dezenas de pixels e o modelo
+não o reconhece. É o motivo de a linha ficar onde os veículos já estão grandes.
 
 **Sombra sem dono pode virar veículo.** A regra que recupera veículos escuros
 trata como objeto qualquer região de movimento sem pixel de contraste alto.
@@ -334,24 +344,25 @@ faróis à noite, reflexo em piso molhado, moto entrando entre dois carros.
 
 ```
 src/contaflux/
-  deteccao.py     subtração de fundo e filtros de forma
-  rastreio.py     identidade dos objetos entre quadros
-  contagem.py     geometria da linha e regra de contagem
-  pipeline.py     costura das etapas e registro das passagens
-  perfis.py       calibração por tipo de cena
-  porte.py        classificação moto, carro e caminhão
-  velocidade.py   estimativa por trajetória
-  sugestao.py     deduz sozinho onde a linha deve ficar
-  selecao.py      desenho da linha com o mouse
-  menu.py         escolha do vídeo pela lista
-  cena.py         gerador de cenas sintéticas com gabarito
-  video.py        leitura de arquivo e de câmera
-  desenho.py      anotação visual
-  relatorio.py    CSV, JSON e resumo
-  cli.py          linha de comando
+  deteccao.py       subtração de fundo e filtros de forma
+  deteccao_yolo.py  reconhecimento de veículo, quando o pacote está instalado
+  rastreio.py       identidade dos objetos entre quadros
+  contagem.py       geometria da linha e regra de contagem
+  pipeline.py       costura das etapas e registro das passagens
+  perfis.py         calibração por tipo de cena
+  porte.py          classificação moto, carro e caminhão
+  velocidade.py     estimativa por trajetória
+  sugestao.py       deduz sozinho onde a linha deve ficar
+  selecao.py        desenho da linha com o mouse
+  menu.py           escolha do vídeo pela lista
+  cena.py           gerador de cenas sintéticas com gabarito
+  video.py          leitura de arquivo e de câmera
+  desenho.py        anotação visual
+  relatorio.py      CSV, JSON e resumo
+  cli.py            linha de comando
 
-baixar_videos.py  baixa a coleção de vídeos de exemplo
-empacotar.py      gera o executável
+baixar_videos.py    baixa a coleção de vídeos de exemplo
+empacotar.py        gera o executável
 ```
 
 ## Licença
