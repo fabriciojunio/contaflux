@@ -1,0 +1,49 @@
+{
+  "fonte": "videos/05-rodovia-urbana.mp4",
+  "quadros_processados": 278,
+  "fps": 24.0,
+  "total": 4,
+  "por_sentido": {
+    "sentido A": 1,
+    "sentido B": 3
+  },
+  "por_classe": {
+    "carro": 4
+  },
+  "veiculos_por_minuto": 20.72,
+  "velocidade_media_kmh": null,
+  "passagens": [
+    {
+      "id": 17,
+      "quadro": 25,
+      "segundo": 1.04,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 28,
+      "quadro": 121,
+      "segundo": 5.04,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 56,
+      "quadro": 243,
+      "segundo": 10.12,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 52,
+      "quadro": 246,
+      "segundo": 10.25,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    }
+  ]
+}

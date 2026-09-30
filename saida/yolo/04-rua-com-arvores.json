@@ -1,0 +1,91 @@
+{
+  "fonte": "videos/04-rua-com-arvores.mp4",
+  "quadros_processados": 433,
+  "fps": 23.976023976023978,
+  "total": 9,
+  "por_sentido": {
+    "sentido B": 6,
+    "sentido A": 3
+  },
+  "por_classe": {
+    "carro": 7,
+    "caminhão": 1,
+    "ônibus": 1
+  },
+  "veiculos_por_minuto": 29.9,
+  "velocidade_media_kmh": null,
+  "passagens": [
+    {
+      "id": 1,
+      "quadro": 49,
+      "segundo": 2.04,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 12,
+      "quadro": 113,
+      "segundo": 4.71,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 9,
+      "quadro": 121,
+      "segundo": 5.05,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 14,
+      "quadro": 151,
+      "segundo": 6.3,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 22,
+      "quadro": 197,
+      "segundo": 8.22,
+      "sentido": "sentido B",
+      "classe": "caminhão",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 24,
+      "quadro": 211,
+      "segundo": 8.8,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 30,
+      "quadro": 319,
+      "segundo": 13.3,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 34,
+      "quadro": 357,
+      "segundo": 14.89,
+      "sentido": "sentido B",
+      "classe": "ônibus",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 26,
+      "quadro": 370,
+      "segundo": 15.43,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    }
+  ]
+}

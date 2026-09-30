@@ -1,0 +1,178 @@
+{
+  "fonte": "videos/02-rua-de-cidade.mp4",
+  "quadros_processados": 240,
+  "fps": 23.976023976023978,
+  "total": 20,
+  "por_sentido": {
+    "sentido B": 13,
+    "sentido A": 7
+  },
+  "por_classe": {
+    "carro": 19,
+    "ônibus": 1
+  },
+  "veiculos_por_minuto": 119.88,
+  "velocidade_media_kmh": null,
+  "passagens": [
+    {
+      "id": 8,
+      "quadro": 4,
+      "segundo": 0.17,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 7,
+      "quadro": 9,
+      "segundo": 0.38,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 6,
+      "quadro": 11,
+      "segundo": 0.46,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 5,
+      "quadro": 25,
+      "segundo": 1.04,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 12,
+      "quadro": 27,
+      "segundo": 1.13,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 11,
+      "quadro": 40,
+      "segundo": 1.67,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 13,
+      "quadro": 57,
+      "segundo": 2.38,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 23,
+      "quadro": 75,
+      "segundo": 3.13,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 31,
+      "quadro": 93,
+      "segundo": 3.88,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 26,
+      "quadro": 94,
+      "segundo": 3.92,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 28,
+      "quadro": 109,
+      "segundo": 4.55,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 30,
+      "quadro": 114,
+      "segundo": 4.75,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 20,
+      "quadro": 122,
+      "segundo": 5.09,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 33,
+      "quadro": 135,
+      "segundo": 5.63,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 36,
+      "quadro": 154,
+      "segundo": 6.42,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 37,
+      "quadro": 191,
+      "segundo": 7.97,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 44,
+      "quadro": 199,
+      "segundo": 8.3,
+      "sentido": "sentido B",
+      "classe": "ônibus",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 50,
+      "quadro": 217,
+      "segundo": 9.05,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 41,
+      "quadro": 232,
+      "segundo": 9.68,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 47,
+      "quadro": 234,
+      "segundo": 9.76,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    }
+  ]
+}

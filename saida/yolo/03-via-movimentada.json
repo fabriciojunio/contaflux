@@ -1,0 +1,1251 @@
+{
+  "fonte": "videos/03-via-movimentada.mp4",
+  "quadros_processados": 636,
+  "fps": 29.97002997002997,
+  "total": 154,
+  "por_sentido": {
+    "sentido A": 90,
+    "sentido B": 64
+  },
+  "por_classe": {
+    "carro": 147,
+    "ônibus": 4,
+    "caminhão": 3
+  },
+  "veiculos_por_minuto": 435.41,
+  "velocidade_media_kmh": null,
+  "passagens": [
+    {
+      "id": 7,
+      "quadro": 3,
+      "segundo": 0.1,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 9,
+      "quadro": 4,
+      "segundo": 0.13,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 14,
+      "quadro": 4,
+      "segundo": 0.13,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 17,
+      "quadro": 5,
+      "segundo": 0.17,
+      "sentido": "sentido B",
+      "classe": "ônibus",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 10,
+      "quadro": 8,
+      "segundo": 0.27,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 13,
+      "quadro": 10,
+      "segundo": 0.33,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 26,
+      "quadro": 11,
+      "segundo": 0.37,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 11,
+      "quadro": 12,
+      "segundo": 0.4,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 15,
+      "quadro": 13,
+      "segundo": 0.43,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 25,
+      "quadro": 13,
+      "segundo": 0.43,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 18,
+      "quadro": 19,
+      "segundo": 0.63,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 21,
+      "quadro": 20,
+      "segundo": 0.67,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 22,
+      "quadro": 20,
+      "segundo": 0.67,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 2,
+      "quadro": 23,
+      "segundo": 0.77,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 20,
+      "quadro": 23,
+      "segundo": 0.77,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 30,
+      "quadro": 28,
+      "segundo": 0.93,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 23,
+      "quadro": 31,
+      "segundo": 1.03,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 28,
+      "quadro": 31,
+      "segundo": 1.03,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 5,
+      "quadro": 35,
+      "segundo": 1.17,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 33,
+      "quadro": 37,
+      "segundo": 1.23,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 34,
+      "quadro": 42,
+      "segundo": 1.4,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 29,
+      "quadro": 45,
+      "segundo": 1.5,
+      "sentido": "sentido A",
+      "classe": "caminhão",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 19,
+      "quadro": 49,
+      "segundo": 1.63,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 38,
+      "quadro": 49,
+      "segundo": 1.63,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 41,
+      "quadro": 54,
+      "segundo": 1.8,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 31,
+      "quadro": 59,
+      "segundo": 1.97,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 37,
+      "quadro": 60,
+      "segundo": 2.0,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 35,
+      "quadro": 63,
+      "segundo": 2.1,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 40,
+      "quadro": 66,
+      "segundo": 2.2,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 43,
+      "quadro": 67,
+      "segundo": 2.24,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 45,
+      "quadro": 67,
+      "segundo": 2.24,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 36,
+      "quadro": 71,
+      "segundo": 2.37,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 42,
+      "quadro": 72,
+      "segundo": 2.4,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 39,
+      "quadro": 84,
+      "segundo": 2.8,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 46,
+      "quadro": 90,
+      "segundo": 3.0,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 49,
+      "quadro": 104,
+      "segundo": 3.47,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 32,
+      "quadro": 107,
+      "segundo": 3.57,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 47,
+      "quadro": 107,
+      "segundo": 3.57,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 53,
+      "quadro": 125,
+      "segundo": 4.17,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 61,
+      "quadro": 125,
+      "segundo": 4.17,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 55,
+      "quadro": 127,
+      "segundo": 4.24,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 44,
+      "quadro": 137,
+      "segundo": 4.57,
+      "sentido": "sentido A",
+      "classe": "ônibus",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 63,
+      "quadro": 142,
+      "segundo": 4.74,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 62,
+      "quadro": 153,
+      "segundo": 5.11,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 67,
+      "quadro": 159,
+      "segundo": 5.31,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 69,
+      "quadro": 169,
+      "segundo": 5.64,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 73,
+      "quadro": 178,
+      "segundo": 5.94,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 54,
+      "quadro": 202,
+      "segundo": 6.74,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 75,
+      "quadro": 222,
+      "segundo": 7.41,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 78,
+      "quadro": 222,
+      "segundo": 7.41,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 80,
+      "quadro": 223,
+      "segundo": 7.44,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 64,
+      "quadro": 227,
+      "segundo": 7.57,
+      "sentido": "sentido A",
+      "classe": "caminhão",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 72,
+      "quadro": 235,
+      "segundo": 7.84,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 68,
+      "quadro": 236,
+      "segundo": 7.87,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 57,
+      "quadro": 240,
+      "segundo": 8.01,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 82,
+      "quadro": 242,
+      "segundo": 8.07,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 83,
+      "quadro": 245,
+      "segundo": 8.17,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 87,
+      "quadro": 246,
+      "segundo": 8.21,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 88,
+      "quadro": 248,
+      "segundo": 8.27,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 91,
+      "quadro": 249,
+      "segundo": 8.31,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 92,
+      "quadro": 252,
+      "segundo": 8.41,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 79,
+      "quadro": 259,
+      "segundo": 8.64,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 74,
+      "quadro": 261,
+      "segundo": 8.71,
+      "sentido": "sentido A",
+      "classe": "caminhão",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 95,
+      "quadro": 262,
+      "segundo": 8.74,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 96,
+      "quadro": 272,
+      "segundo": 9.08,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 100,
+      "quadro": 275,
+      "segundo": 9.18,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 94,
+      "quadro": 281,
+      "segundo": 9.38,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 101,
+      "quadro": 281,
+      "segundo": 9.38,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 103,
+      "quadro": 283,
+      "segundo": 9.44,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 84,
+      "quadro": 287,
+      "segundo": 9.58,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 99,
+      "quadro": 287,
+      "segundo": 9.58,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 90,
+      "quadro": 288,
+      "segundo": 9.61,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 107,
+      "quadro": 291,
+      "segundo": 9.71,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 104,
+      "quadro": 294,
+      "segundo": 9.81,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 97,
+      "quadro": 300,
+      "segundo": 10.01,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 98,
+      "quadro": 300,
+      "segundo": 10.01,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 113,
+      "quadro": 304,
+      "segundo": 10.14,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 110,
+      "quadro": 306,
+      "segundo": 10.21,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 93,
+      "quadro": 308,
+      "segundo": 10.28,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 111,
+      "quadro": 309,
+      "segundo": 10.31,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 115,
+      "quadro": 317,
+      "segundo": 10.58,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 112,
+      "quadro": 319,
+      "segundo": 10.64,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 114,
+      "quadro": 325,
+      "segundo": 10.84,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 117,
+      "quadro": 325,
+      "segundo": 10.84,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 119,
+      "quadro": 329,
+      "segundo": 10.98,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 106,
+      "quadro": 331,
+      "segundo": 11.04,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 108,
+      "quadro": 332,
+      "segundo": 11.08,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 127,
+      "quadro": 333,
+      "segundo": 11.11,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 130,
+      "quadro": 343,
+      "segundo": 11.44,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 129,
+      "quadro": 354,
+      "segundo": 11.81,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 128,
+      "quadro": 363,
+      "segundo": 12.11,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 118,
+      "quadro": 369,
+      "segundo": 12.31,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 125,
+      "quadro": 370,
+      "segundo": 12.35,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 135,
+      "quadro": 375,
+      "segundo": 12.51,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 132,
+      "quadro": 378,
+      "segundo": 12.61,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 126,
+      "quadro": 384,
+      "segundo": 12.81,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 142,
+      "quadro": 385,
+      "segundo": 12.85,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 136,
+      "quadro": 389,
+      "segundo": 12.98,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 143,
+      "quadro": 393,
+      "segundo": 13.11,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 122,
+      "quadro": 396,
+      "segundo": 13.21,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 133,
+      "quadro": 406,
+      "segundo": 13.55,
+      "sentido": "sentido B",
+      "classe": "ônibus",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 137,
+      "quadro": 408,
+      "segundo": 13.61,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 145,
+      "quadro": 413,
+      "segundo": 13.78,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 139,
+      "quadro": 415,
+      "segundo": 13.85,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 148,
+      "quadro": 419,
+      "segundo": 13.98,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 144,
+      "quadro": 423,
+      "segundo": 14.11,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 153,
+      "quadro": 424,
+      "segundo": 14.15,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 141,
+      "quadro": 425,
+      "segundo": 14.18,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 156,
+      "quadro": 425,
+      "segundo": 14.18,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 140,
+      "quadro": 429,
+      "segundo": 14.31,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 151,
+      "quadro": 429,
+      "segundo": 14.31,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 147,
+      "quadro": 431,
+      "segundo": 14.38,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 152,
+      "quadro": 432,
+      "segundo": 14.41,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 158,
+      "quadro": 433,
+      "segundo": 14.45,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 157,
+      "quadro": 437,
+      "segundo": 14.58,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 154,
+      "quadro": 439,
+      "segundo": 14.65,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 165,
+      "quadro": 447,
+      "segundo": 14.91,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 161,
+      "quadro": 451,
+      "segundo": 15.05,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 166,
+      "quadro": 455,
+      "segundo": 15.18,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 160,
+      "quadro": 463,
+      "segundo": 15.45,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 164,
+      "quadro": 473,
+      "segundo": 15.78,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 170,
+      "quadro": 473,
+      "segundo": 15.78,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 168,
+      "quadro": 484,
+      "segundo": 16.15,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 167,
+      "quadro": 486,
+      "segundo": 16.22,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 169,
+      "quadro": 502,
+      "segundo": 16.75,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 173,
+      "quadro": 508,
+      "segundo": 16.95,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 179,
+      "quadro": 523,
+      "segundo": 17.45,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 185,
+      "quadro": 545,
+      "segundo": 18.18,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 163,
+      "quadro": 551,
+      "segundo": 18.39,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 171,
+      "quadro": 560,
+      "segundo": 18.69,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 189,
+      "quadro": 564,
+      "segundo": 18.82,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 177,
+      "quadro": 567,
+      "segundo": 18.92,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 192,
+      "quadro": 568,
+      "segundo": 18.95,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 193,
+      "quadro": 572,
+      "segundo": 19.09,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 196,
+      "quadro": 574,
+      "segundo": 19.15,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 197,
+      "quadro": 581,
+      "segundo": 19.39,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 182,
+      "quadro": 585,
+      "segundo": 19.52,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 199,
+      "quadro": 587,
+      "segundo": 19.59,
+      "sentido": "sentido A",
+      "classe": "ônibus",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 188,
+      "quadro": 588,
+      "segundo": 19.62,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 191,
+      "quadro": 593,
+      "segundo": 19.79,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 198,
+      "quadro": 593,
+      "segundo": 19.79,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 186,
+      "quadro": 597,
+      "segundo": 19.92,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 195,
+      "quadro": 599,
+      "segundo": 19.99,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 204,
+      "quadro": 600,
+      "segundo": 20.02,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 206,
+      "quadro": 601,
+      "segundo": 20.05,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 205,
+      "quadro": 604,
+      "segundo": 20.15,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 203,
+      "quadro": 606,
+      "segundo": 20.22,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 202,
+      "quadro": 610,
+      "segundo": 20.35,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 209,
+      "quadro": 626,
+      "segundo": 20.89,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 211,
+      "quadro": 628,
+      "segundo": 20.95,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 208,
+      "quadro": 630,
+      "segundo": 21.02,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 190,
+      "quadro": 631,
+      "segundo": 21.05,
+      "sentido": "sentido A",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 212,
+      "quadro": 635,
+      "segundo": 21.19,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    },
+    {
+      "id": 215,
+      "quadro": 635,
+      "segundo": 21.19,
+      "sentido": "sentido B",
+      "classe": "carro",
+      "velocidade_kmh": ""
+    }
+  ]
+}
