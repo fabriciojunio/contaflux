@@ -54,6 +54,9 @@ vazia tempo suficiente.
 """
 
 QUADROS_DE_OBSERVACAO = 400
+# O reconhecimento nao aquece fundo e custa ~0,16 s por quadro na CPU, entao
+# observa menos tempo. Medido: o eixo ja esta estavel bem antes disso.
+QUADROS_DE_OBSERVACAO_RECONHECIMENTO = 150
 """Quantos quadros são olhados para deduzir onde fica a linha.
 
 Precisa cobrir o aquecimento do modelo de fundo e ainda sobrar alguns segundos
@@ -393,15 +396,26 @@ def salvar_cena_de_demonstracao(argumentos, saida=sys.stdout) -> Path:
     return destino
 
 
-def montar_detector(escolha: str, perfil, saida=sys.stdout):
+def montar_detector(escolha: str, perfil, saida=sys.stdout, sintetica: bool = False):
     """Cria o detector pedido, ou explica por que caiu no outro.
 
     "auto" prefere o reconhecimento porque é ele que distingue carro de nuvem,
     de contêiner e de pedestre. Sem o pacote instalado, cai na subtração de
     fundo em vez de falhar: ela conta bem em pista limpa e não precisa baixar
     nada, o que mantém a demonstração funcionando em qualquer máquina.
+
+    Na cena sintética o "auto" vai para movimento, e isso não é concessão: os
+    veículos dela são retângulos desenhados, e um reconhecedor treinado em foto
+    de rua não tem como enxergar retângulo. Sem esta regra, a demonstração
+    contava zero de doze em toda máquina com o ultralytics instalado, que é
+    justamente a máquina de quem desenvolve.
     """
     if escolha == 'movimento':
+        return None
+
+    if sintetica and escolha == 'auto':
+        print('Cena sintética: contando por movimento, porque o reconhecimento '
+              'não enxerga veículo desenhado.', file=saida)
         return None
 
     try:
@@ -412,6 +426,9 @@ def montar_detector(escolha: str, perfil, saida=sys.stdout):
         print(f'Detecção por reconhecimento indisponível, usando movimento.', file=saida)
         return None
 
+    if sintetica:
+        print('Aviso: reconhecimento pedido numa cena sintética. Os veículos são '
+              'desenhados, e o modelo tende a não reconhecer nenhum.', file=saida)
     print('Detectando por reconhecimento de veículo (YOLO).', file=saida)
     return detector
 
@@ -424,7 +441,7 @@ def _e_arquivo(fonte: str) -> bool:
     return fonte != 'demo' and not str(fonte).isdigit()
 
 
-def _linha_sugerida(argumentos, largura: int, altura: int, perfil, saida):
+def _linha_sugerida(argumentos, largura: int, altura: int, perfil, saida, detector=None):
     """Observa alguns segundos do vídeo e deduz onde a linha deve ficar.
 
     Só vale para arquivo: a observação consome quadros, e num arquivo dá para
@@ -438,7 +455,9 @@ def _linha_sugerida(argumentos, largura: int, altura: int, perfil, saida):
     try:
         with FonteDeVideo(argumentos.fonte, redimensionar_para=argumentos.largura) as fonte:
             linha, observacao = sugerir_linha(
-                fonte.quadros(), largura, altura, perfil, QUADROS_DE_OBSERVACAO
+                fonte.quadros(), largura, altura, perfil,
+                QUADROS_DE_OBSERVACAO_RECONHECIMENTO if detector else QUADROS_DE_OBSERVACAO,
+                detector,
             )
     except FonteIndisponivel:
         return None, None
@@ -480,7 +499,7 @@ def _ajustar_porte(perfil, observacao, saida):
     return replace(perfil, faixas=faixas)
 
 
-def _definir_linha(argumentos, largura: int, altura: int, perfil, saida):
+def _definir_linha(argumentos, largura: int, altura: int, perfil, saida, detector=None):
     """Devolve a linha e a observação do tráfego, quando houve uma."""
     if argumentos.linha:
         return analisar_linha(argumentos.linha, largura, altura), None
@@ -502,7 +521,8 @@ def _definir_linha(argumentos, largura: int, altura: int, perfil, saida):
             return escolhida, None
 
     if not argumentos.linha_fixa:
-        sugerida, observacao = _linha_sugerida(argumentos, largura, altura, perfil, saida)
+        sugerida, observacao = _linha_sugerida(argumentos, largura, altura, perfil,
+                                               saida, detector)
         if sugerida is not None:
             return sugerida, observacao
 
@@ -515,7 +535,14 @@ def executar(argumentos, saida=sys.stdout) -> Relatorio:
     quadros, largura, altura = entrada.quadros, entrada.largura, entrada.altura
     fps, rotulo, esperado = entrada.fps, entrada.rotulo, entrada.esperado
     perfil = obter(argumentos.perfil)
-    linha, observacao = _definir_linha(argumentos, largura, altura, perfil, saida)
+
+    # O detector vem antes da linha de proposito: quem observa o trafego para
+    # posicionar a linha precisa ser o mesmo que vai contar, senao a linha e
+    # posta para objetos que a contagem nem olha.
+    detector = montar_detector(argumentos.detector, perfil, saida,
+                               sintetica=entrada.sintetica)
+
+    linha, observacao = _definir_linha(argumentos, largura, altura, perfil, saida, detector)
     perfil = _ajustar_porte(perfil, observacao, saida)
 
     escala = None
@@ -528,7 +555,6 @@ def executar(argumentos, saida=sys.stdout) -> Relatorio:
         else entrada.aquecimento_padrao()
     )
 
-    detector = montar_detector(argumentos.detector, perfil, saida)
     if detector is not None:
         # O reconhecimento não aprende a cena, então não há o que aquecer.
         aquecimento = 0

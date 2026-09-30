@@ -13,12 +13,14 @@ from contaflux.cli import (
     construir_parser,
     executar,
     main,
+    montar_detector,
     pasta_ao_lado_do_executavel,
     pasta_para_menu_automatico,
     preparar_console,
     salvar_cena_de_demonstracao,
 )
 from contaflux.contagem import Linha
+from contaflux.deteccao_yolo import UltralyticsIndisponivel
 from contaflux.video import FonteDeVideo, FonteIndisponivel
 
 
@@ -164,6 +166,33 @@ def test_demonstracao_conta_o_esperado():
     assert 'exato' in saida.getvalue()
 
 
+def test_cena_sintetica_no_automatico_nao_vai_para_o_reconhecimento():
+    """A demonstração precisa contar mesmo com o ultralytics instalado.
+
+    Regressão de um defeito que passou meses despercebido: "auto" escolhia o
+    reconhecimento, que não enxerga retângulo desenhado, e `contaflux` sem
+    argumento nenhum passou a contar zero de doze em toda máquina que tivesse o
+    pacote. A suíte não pegou porque a CI não instala o ultralytics, e este
+    teste pega dos dois lados: ele olha a decisão, e não o pacote.
+    """
+    saida = io.StringIO()
+    assert montar_detector('auto', None, saida, sintetica=True) is None
+    assert 'sintética' in saida.getvalue()
+
+
+def test_video_de_rua_no_automatico_continua_preferindo_o_reconhecimento():
+    """O contrário também precisa valer: fora da cena sintética, auto é YOLO."""
+    saida = io.StringIO()
+    try:
+        detector = montar_detector('auto', None, saida, sintetica=False)
+    except UltralyticsIndisponivel:
+        pytest.skip('ultralytics não instalado nesta máquina')
+    if detector is None:
+        assert 'indisponível' in saida.getvalue()
+    else:
+        assert 'reconhecimento' in saida.getvalue()
+
+
 @pytest.mark.lento
 def test_demonstracao_grava_csv(tmp_path):
     destino = tmp_path / 'saida.csv'
@@ -269,7 +298,12 @@ def test_o_video_gravado_e_contado_com_o_numero_certo(tmp_path):
     )
     salvar_cena_de_demonstracao(gravar, saida=io.StringIO())
 
-    contar = construir_parser().parse_args([str(destino), '--sem-janela'])
+    # Movimento explicito: o arquivo em disco perdeu a marca de cena sintetica,
+    # e o reconhecimento nao enxerga veiculo desenhado. Quem esta sob teste aqui
+    # e a ida e volta pela compressao, que e do caminho de movimento.
+    contar = construir_parser().parse_args(
+        [str(destino), '--sem-janela', '--detector', 'movimento']
+    )
     relatorio = executar(contar, saida=io.StringIO())
     assert relatorio.total == 6
 
