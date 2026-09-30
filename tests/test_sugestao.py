@@ -10,15 +10,15 @@ from contaflux.cena import GeradorDeCena, ParametrosCena, veiculos_regulares
 from contaflux.perfis import RODOVIA
 from contaflux.sugestao import (
     Observacao,
-    _rumo_dominante,
+    _eixo_dominante,
     linha_a_partir_de,
     observar,
     sugerir_linha,
 )
 
 
-def observacao(centro=(320.0, 180.0), direcao=(1.0, 0.0), alvos=8, posicoes=200, area=2500.0):
-    return Observacao(alvos, posicoes, centro, direcao, area)
+def observacao(centro=(320.0, 180.0), eixo=(1.0, 0.0), alvos=8, posicoes=200, area=2500.0):
+    return Observacao(alvos, posicoes, centro, eixo, area)
 
 
 # --------------------------------------------------------------------------
@@ -26,43 +26,75 @@ def observacao(centro=(320.0, 180.0), direcao=(1.0, 0.0), alvos=8, posicoes=200,
 # --------------------------------------------------------------------------
 
 
-def test_sem_rumos_nao_ha_direcao():
-    assert _rumo_dominante([]) is None
+def mesmo_eixo(obtido, esperado, tolerancia=1e-6):
+    """Compara eixos, e não vetores: (1,0) e (-1,0) são a mesma reta.
+
+    O sinal do eixo é arbitrário por construção, então exigir um sinal
+    específico seria fixar em teste uma coisa que o código não promete.
+    """
+    if obtido is None or esperado is None:
+        return obtido is esperado
+    ax, ay = obtido
+    bx, by = esperado
+    return abs(abs(ax * bx + ay * by) - 1.0) < tolerancia
+
+
+def test_sem_rumos_nao_ha_eixo():
+    assert _eixo_dominante([]) is None
 
 
 @pytest.mark.parametrize(
     'rumo,esperado',
     [
         ((10.0, 0.0), (1.0, 0.0)),
-        ((-10.0, 0.0), (-1.0, 0.0)),
+        ((-10.0, 0.0), (1.0, 0.0)),
         ((0.0, 7.0), (0.0, 1.0)),
         ((3.0, 4.0), (0.6, 0.8)),
     ],
 )
-def test_um_rumo_vira_vetor_unitario(rumo, esperado):
-    obtido = _rumo_dominante([rumo])
-    assert obtido == pytest.approx(esperado)
+def test_um_rumo_vira_eixo_unitario(rumo, esperado):
+    assert mesmo_eixo(_eixo_dominante([rumo]), esperado)
 
 
-def test_rumos_iguais_mantem_a_direcao():
-    assert _rumo_dominante([(5.0, 0.0)] * 20) == pytest.approx((1.0, 0.0))
+def test_rumos_iguais_mantem_o_eixo():
+    assert mesmo_eixo(_eixo_dominante([(5.0, 0.0)] * 20), (1.0, 0.0))
 
 
-def test_rumos_opostos_se_cancelam():
-    """Se metade vai para cada lado, não existe direção dominante honesta."""
-    assert _rumo_dominante([(5.0, 0.0), (-5.0, 0.0)]) is None
+def test_rumos_opostos_reforcam_o_mesmo_eixo():
+    """Via de mão dupla é o caso comum, e não um caso sem resposta.
+
+    A versão anterior somava os vetores e devolvia None aqui, por entender que
+    não havia sentido dominante. Não havia mesmo, e não importa: a linha de
+    contagem é perpendicular à via, e dois fluxos opostos descrevem a mesma
+    via com o dobro de amostras.
+    """
+    assert mesmo_eixo(_eixo_dominante([(5.0, 0.0), (-5.0, 0.0)]), (1.0, 0.0))
+    assert mesmo_eixo(_eixo_dominante([(0.0, 6.0)] * 9 + [(0.0, -6.0)] * 8), (0.0, 1.0))
+
+
+def test_rumos_espalhados_ainda_devolvem_um_eixo():
+    """Não há piso de coerência, e a medição é que decidiu isso.
+
+    A resultante do ângulo dobrado ficou entre 0,10 e 0,59 nos cinco vídeos de
+    exemplo, inclusive onde a linha sai certa, porque a caixa do detector de
+    movimento treme. Nesse cenário nenhum piso separa "sem eixo" de "eixo com
+    ruído", e um piso de 0,45 chegou a recusar quatro dos cinco. Ver
+    CALIBRACAO.md.
+    """
+    espalhados = [(1.0, 0.0), (0.0, 1.0), (1.0, 1.0), (1.0, -1.0), (-1.0, 1.0)]
+    assert _eixo_dominante(espalhados) is not None
 
 
 def test_um_veiculo_longo_nao_domina_a_media():
     """Os rumos são normalizados antes de somar, senão um carro decide sozinho."""
     muitos_curtos = [(0.0, 10.0)] * 5
     um_enorme = [(900.0, 0.0)]
-    direcao = _rumo_dominante(muitos_curtos + um_enorme)
-    assert direcao[1] > direcao[0]
+    eixo = _eixo_dominante(muitos_curtos + um_enorme)
+    assert abs(eixo[1]) > abs(eixo[0])
 
 
 def test_rumo_de_tamanho_zero_e_ignorado():
-    assert _rumo_dominante([(0.0, 0.0), (4.0, 0.0)]) == pytest.approx((1.0, 0.0))
+    assert mesmo_eixo(_eixo_dominante([(0.0, 0.0), (4.0, 0.0)]), (1.0, 0.0))
 
 
 # --------------------------------------------------------------------------
@@ -88,8 +120,8 @@ def test_sem_centro_nao_e_confiavel():
     assert observacao(centro=None).confiavel is False
 
 
-def test_sem_direcao_nao_e_confiavel():
-    assert observacao(direcao=None).confiavel is False
+def test_sem_eixo_nao_e_confiavel():
+    assert observacao(eixo=None).confiavel is False
 
 
 # --------------------------------------------------------------------------
@@ -103,14 +135,14 @@ def test_observacao_fraca_nao_gera_linha():
 
 
 def test_trafego_horizontal_gera_linha_vertical():
-    linha = linha_a_partir_de(observacao(direcao=(1.0, 0.0)), 640, 360)
+    linha = linha_a_partir_de(observacao(eixo=(1.0, 0.0)), 640, 360)
     assert linha.x1 == pytest.approx(linha.x2)
     assert linha.y1 != pytest.approx(linha.y2)
 
 
 def test_trafego_vertical_gera_linha_horizontal():
     """É o caso da câmera de frente, com os carros vindo em direção a ela."""
-    linha = linha_a_partir_de(observacao(direcao=(0.0, 1.0)), 640, 360)
+    linha = linha_a_partir_de(observacao(eixo=(0.0, 1.0)), 640, 360)
     assert linha.y1 == pytest.approx(linha.y2)
     assert linha.x1 != pytest.approx(linha.x2)
 
@@ -118,11 +150,11 @@ def test_trafego_vertical_gera_linha_horizontal():
 @pytest.mark.parametrize('angulo', range(0, 360, 15))
 def test_a_linha_e_sempre_perpendicular_ao_trafego(angulo):
     radianos = math.radians(angulo)
-    direcao = (math.cos(radianos), math.sin(radianos))
-    linha = linha_a_partir_de(observacao(direcao=direcao), 640, 360)
+    eixo = (math.cos(radianos), math.sin(radianos))
+    linha = linha_a_partir_de(observacao(eixo=eixo), 640, 360)
 
     da_linha = (linha.x2 - linha.x1, linha.y2 - linha.y1)
-    produto = da_linha[0] * direcao[0] + da_linha[1] * direcao[1]
+    produto = da_linha[0] * eixo[0] + da_linha[1] * eixo[1]
     assert produto == pytest.approx(0.0, abs=1e-6)
 
 
@@ -146,26 +178,27 @@ def test_a_linha_e_longa_o_bastante_para_cruzar_o_quadro(largura, altura):
 
 
 @pytest.mark.lento
-def test_observa_cena_sintetica_e_acha_o_sentido():
-    """Na cena de rodovia os veículos vão da esquerda para a direita."""
+def test_observa_cena_sintetica_e_acha_o_eixo():
+    """Na cena de rodovia os veículos correm na horizontal."""
     parametros = ParametrosCena(quadros=460, semente=3)
     parametros.veiculos = veiculos_regulares(10, parametros, semente=3)
     cena = GeradorDeCena(parametros)
 
     obtida = observar(cena.quadros(), RODOVIA, limite_de_quadros=460)
     assert obtida.confiavel
-    assert obtida.direcao[0] > 0.8
+    assert abs(obtida.eixo[0]) > 0.8
 
 
 @pytest.mark.lento
-def test_sentido_contrario_e_reconhecido():
+def test_o_eixo_e_o_mesmo_no_sentido_contrario():
+    """Inverter o sentido não muda a via, e a linha tem que sair igual."""
     parametros = ParametrosCena(quadros=460, semente=4)
     parametros.veiculos = veiculos_regulares(10, parametros, sentido=-1, semente=4)
     cena = GeradorDeCena(parametros)
 
     obtida = observar(cena.quadros(), RODOVIA, limite_de_quadros=460)
     assert obtida.confiavel
-    assert obtida.direcao[0] < -0.8
+    assert abs(obtida.eixo[0]) > 0.8
 
 
 @pytest.mark.lento
