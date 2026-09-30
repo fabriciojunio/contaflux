@@ -27,6 +27,14 @@ comando os baixa:
 python baixar_videos.py
 ```
 
+Os quatro primeiros são câmera fixa com a via bem enquadrada, que é o caso para
+o qual o método foi feito, e neles a linha sai sozinha no lugar certo. O quinto,
+`05-rodovia-urbana`, é uma tomada alta e distante: só a faixa de baixo do quadro
+tem veículo com pixels suficientes para o reconhecimento, e a contagem
+automática fica bem abaixo do que passa. Ele ficou na coleção de propósito, como
+o contra-exemplo do limite descrito em "Limitações conhecidas"; para contar nele
+é preciso marcar a linha à mão sobre uma pista só.
+
 Uma janela abre mostrando a linha de contagem, uma caixa em volta de cada
 veículo acompanhado, o rastro do movimento e o placar no canto. A caixa muda de
 cor no instante em que o veículo é contado. Espaço pausa, `q` encerra.
@@ -100,11 +108,22 @@ contêiner, guindaste e reflexo na água; num vídeo com céu aberto, marcou nuv
 Todos são movimento de verdade, e nenhum é carro.
 
 **Reconhecimento** pergunta *"isso é um carro?"*. Usa um modelo YOLO treinado, e
-com ele prédio, árvore, céu e pedestre deixam de aparecer na conta. Foi testado
-numa rodovia com a cidade inteira ao fundo e numa rua arborizada: zero caixa
-fora dos veículos. Ele também informa o tipo do veículo, o que resolve de vez a
-classificação de porte, que antes era deduzida do tamanho em pixels e errava sob
-perspectiva.
+com ele prédio, árvore, céu, nuvem e pedestre deixam de aparecer na conta, que é
+onde a subtração de fundo mais erra. Ele também informa o tipo do veículo, em vez
+de deduzir porte do tamanho em pixels.
+
+Duas ressalvas medidas nos vídeos de exemplo, porque "reconhece" não quer dizer
+"acerta sempre":
+
+- **Objeto de beira de pista com cara de veículo ainda entra.** No vídeo da
+  rodovia, o painel de mensagem variável do acostamento é marcado como ônibus ou
+  caminhão em todos os quadros. Ele não atrapalha a contagem porque está parado
+  e nunca cruza a linha, mas está lá, com caixa e identificador.
+- **O tipo do veículo erra bastante de frente e de longe.** Nesse mesmo vídeo,
+  6 dos 35 veículos contados saíram como "caminhão" e, olhando quadro a quadro,
+  são carros. A classe `truck` do COCO é larga e pega perua, SUV e até carro
+  visto de frente. **A contagem não depende disso**: o porte é informação extra,
+  e nos dois modos ela é a parte mais fraca.
 
 ```
 contaflux via.mp4                      # usa reconhecimento se estiver instalado

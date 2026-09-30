@@ -233,6 +233,77 @@ produz expansão radial, não translação. O vídeo de dashcam passou no teste 
 0,264 pixel por quadro, dentro da faixa dos vídeos de câmera fixa. A triagem
 acabou sendo feita a olho, olhando um quadro de cada vídeo.
 
+## A linha automática usava o sentido do tráfego, e devia usar o eixo
+
+Achado em 29/09/2026, no vídeo `05-rodovia-urbana`, que contava **1 veículo em
+12 segundos** de rodovia cheia.
+
+A dedução da linha somava os rumos dos alvos e tirava a média. Numa via de mão
+dupla os dois fluxos apontam para lados opostos e essa soma se anula: sobra o
+resíduo do ruído, e a perpendicular do ruído é uma linha qualquer. Nesse vídeo
+ela saiu subindo pelo céu, por cima dos prédios.
+
+A linha não precisa saber quem vai para que lado, só em que reta a via corre.
+A média passou a ser no ângulo dobrado, que é como se promedia orientação sem
+sentido: 0° e 180° caem no mesmo ponto e os dois fluxos se reforçam.
+
+Medido nos cinco vídeos, com o detector de movimento e 400 quadros:
+
+| vídeo | rumos | eixo | coerência do eixo | coerência da média antiga |
+|---|---|---|---|---|
+| 01 rodovia de frente | 1.033 | 38,0° | 0,317 | 0,577 |
+| 02 rua de cidade | 361 | 153,4° | 0,206 | 0,400 |
+| 03 via movimentada | 3.110 | 172,4° | 0,099 | 0,059 |
+| 04 rua com árvores | 788 | 8,2° | 0,255 | 0,178 |
+| 05 rodovia urbana | 304 | 165,7° | **0,593** | **0,224** |
+
+O vídeo 05 é a assinatura do problema: é o de **maior** coerência de eixo e o de
+menor coerência de sentido. O eixo está lá, firme; o que não existe é sentido
+dominante. Conferido também com o reconhecimento em vez do detector de
+movimento, que devolveu 165,3° e coerência 0,406 — os dois concordam.
+
+### O piso de coerência que não entrou
+
+A ideia seguinte era recusar a sugestão quando a coerência fosse baixa, em vez
+de chutar um eixo. A tabela acima matou a ideia: vídeo que funciona fica entre
+0,10 e 0,32, porque a caixa do detector de movimento treme e cada alvo
+contribui com rumo ruidoso. Um piso de 0,45 foi testado e recusou quatro dos
+cinco, derrubando a via movimentada de 106 para 30 e a rua de cidade de 10
+para 8. Não há piso.
+
+### A causa mais funda: a linha era posta olhando o detector errado
+
+Trocar a média pelo eixo consertou o vídeo 05 e **quebrou** o 03, que caiu de
+106 para 29. O quadro anotado mostrou por quê sem deixar dúvida: a linha saiu
+deitada ao longo da via, paralela aos carros, enquanto os rastros dos veículos
+corriam na vertical.
+
+O eixo medido não batia com o trânsito porque quem media era o detector de
+movimento, e nesse vídeo ele não está olhando veículo: a cena tem passarela,
+escada rolante, pedestre na calçada e a sombra do viaduto, e tudo isso entrou na
+conta do rumo. A coerência de 0,099 era o aviso, e o valor de 172,4° era ruído.
+
+A linha passou a ser posicionada **com o mesmo detector que vai contar**. No
+vídeo 03, observando por reconhecimento, a linha sai em `991,295 até 0,305`,
+horizontal, perpendicular ao trânsito:
+
+| vídeo 03 | linha | contados |
+|---|---|---|
+| média de sentido, observando por movimento | 77,45 a 918,570 | 106 |
+| eixo, observando por movimento | 432,-184 a 563,799 | 29 |
+| eixo, observando por reconhecimento | 991,295 a 0,305 | **154** |
+
+O reconhecimento observa 150 quadros em vez de 400: ele não precisa aquecer
+fundo, e cada quadro custa ~0,16 s na CPU contra ~0,01 s do outro.
+
+### O que continua sem conserto no vídeo 05
+
+Mesmo com o eixo certo a contagem fica baixa, e o motivo não é a linha: a
+tomada é alta e distante, e só a faixa de baixo do quadro tem veículo com pixels
+suficientes para o reconhecimento. É o mesmo motivo que descartou três vídeos na
+triagem, e este ficou na coleção. Para contar nele é preciso marcar a linha à
+mão sobre uma pista só, onde os veículos já estão grandes.
+
 ## O que não foi testado
 
 Vídeo real com gabarito contado à mão. A validação é exata, o que vídeo real não

@@ -119,6 +119,17 @@ Detectando por reconhecimento de veículo (YOLO).
 Sem placa de vídeo é mais lento, cerca de seis vezes. Se quiser a versão rápida
 sem reconhecimento, use `--detector movimento`.
 
+**Na demonstração o programa avisa que vai contar por movimento, e está certo.**
+A cena de demonstração é desenhada, e um reconhecedor treinado em foto de rua
+não enxerga retângulo desenhado. A linha que aparece é esta:
+
+```
+Cena sintética: contando por movimento, porque o reconhecimento não enxerga
+veículo desenhado.
+```
+
+Em vídeo de verdade ele volta a usar o reconhecimento sozinho.
+
 **O executável não traz o reconhecimento**, porque ele sozinho somaria quase um
 gigabyte. Quem quiser essa parte roda pelo Python.
 
