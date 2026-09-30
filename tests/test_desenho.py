@@ -76,6 +76,30 @@ def test_alvo_e_desenhado(quadro):
     assert not np.array_equal(quadro, original)
 
 
+def test_alvo_que_o_detector_perdeu_neste_quadro_nao_e_desenhado():
+    """Caixa parada em cima de asfalto vazio parece defeito, e não é.
+
+    O rastreio segura o alvo alguns quadros para o veículo não voltar como
+    objeto novo. Enquanto isso a caixa dele fica onde ele estava, e num vídeo
+    de rua rápida ela aparece sozinha no meio da pista.
+    """
+    tela = np.full((360, 640, 3), 96, dtype=np.uint8)
+    original = tela.copy()
+    perdido = alvo()
+    perdido.sumido_ha = 2
+    desenhar_alvos(tela, {1: perdido})
+    assert np.array_equal(tela, original)
+
+
+def test_alvo_visto_agora_continua_sendo_desenhado():
+    tela = np.full((360, 640, 3), 96, dtype=np.uint8)
+    original = tela.copy()
+    visto = alvo()
+    visto.sumido_ha = 0
+    desenhar_alvos(tela, {1: visto})
+    assert not np.array_equal(tela, original)
+
+
 @pytest.mark.parametrize('quantidade', range(1, 8))
 def test_varios_alvos_sao_desenhados(quantidade, quadro):
     alvos = {i: alvo(i, x=60 + i * 70) for i in range(1, quantidade + 1)}

@@ -74,9 +74,19 @@ def desenhar_alvos(
     rotulos: dict[int, str] | None = None,
     trajetoria: bool = True,
 ) -> None:
-    """Caixa, identificador e rastro de cada objeto acompanhado."""
+    """Caixa, identificador e rastro de cada objeto acompanhado.
+
+    Alvo que o detector perdeu neste quadro nao ganha caixa. O rastreio o
+    segura por alguns quadros de proposito, para o veiculo nao voltar como
+    objeto novo e ser contado duas vezes, mas a caixa dele fica parada onde ele
+    estava: numa rua rapida isso desenha um retangulo em cima de asfalto vazio,
+    que parece defeito e nao e. O alvo continua vivo por dentro, e alvo parado
+    nao muda de lado da linha, entao nada disso mexe na contagem.
+    """
     rotulos = rotulos or {}
     for identificador, alvo in alvos.items():
+        if alvo.sumido_ha:
+            continue
         x, y, largura, altura = alvo.caixa
         cor = VERMELHO if alvo.contado else VERDE
         cv2.rectangle(imagem, (x, y), (x + largura, y + altura), cor, 2)
