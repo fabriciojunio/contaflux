@@ -10,3 +10,6 @@ dist/
 
 # Gerado pelo PyInstaller a cada empacotamento
 Contaflux.spec
+
+# Saida crua de execucao, guardada so para acompanhar o processamento.
+saida/**/*.log
