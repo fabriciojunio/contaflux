@@ -82,6 +82,12 @@ def test_metros_visiveis_vira_numero(metros):
     assert construir_parser().parse_args(['--metros', metros]).metros == float(metros)
 
 
+@pytest.mark.parametrize('metros', ['0', '-1', 'nan', 'inf', '-inf'])
+def test_parser_recusa_escala_invalida_antes_de_abrir_video(metros):
+    with pytest.raises(SystemExit):
+        construir_parser().parse_args(['--metros=' + metros])
+
+
 def test_versao_encerra_o_programa(capsys):
     with pytest.raises(SystemExit) as saida:
         construir_parser().parse_args(['--versao'])

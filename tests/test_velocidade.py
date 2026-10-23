@@ -76,6 +76,25 @@ def test_as_duas_formas_de_calibrar_coincidem():
     assert por_largura.metros_por_pixel == pytest.approx(por_trecho.metros_por_pixel)
 
 
+@pytest.mark.parametrize('valor', [float('nan'), float('inf'), float('-inf')])
+@pytest.mark.parametrize('campo', range(3))
+@pytest.mark.parametrize('metodo', [Escala.de_largura, Escala.de_trecho])
+def test_escala_recusa_calibracao_nao_finita(metodo, campo, valor):
+    parametros = [640.0, 30.0, 25.0]
+    parametros[campo] = valor
+    with pytest.raises(ValueError):
+        metodo(*parametros)
+
+
+@pytest.mark.parametrize('valor', [0.0, -1.0, float('nan'), float('inf'), float('-inf')])
+@pytest.mark.parametrize('campo', range(2))
+def test_escala_direta_tambem_exige_medidas_positivas_e_finitas(campo, valor):
+    parametros = [0.05, 25.0]
+    parametros[campo] = valor
+    with pytest.raises(ValueError):
+        Escala(*parametros)
+
+
 # --------------------------------------------------------------------------
 # inclinacao_robusta
 # --------------------------------------------------------------------------
@@ -194,7 +213,9 @@ def test_alvo_parado_tem_rapidez_zero():
 def test_conversao_para_quilometros_por_hora(passo, fps):
     escala = Escala(metros_por_pixel=0.05, fps=fps)
     esperado = passo * fps * 0.05 * 3.6
-    assert em_km_por_hora(alvo_reto(passo), escala) == pytest.approx(esperado)
+    # Garante amostra com pelo menos 0,2 s mesmo em 60 FPS.
+    pontos = max(12, int(fps * 0.2) + 1)
+    assert em_km_por_hora(alvo_reto(passo, pontos=pontos), escala) == pytest.approx(esperado)
 
 
 def test_caso_de_referencia_com_numeros_redondos():
@@ -206,6 +227,16 @@ def test_caso_de_referencia_com_numeros_redondos():
 
 def test_sem_pontos_suficientes_nao_ha_velocidade():
     assert em_km_por_hora(alvo_reto(10.0, pontos=3), Escala(0.05, 25.0)) is None
+
+
+def test_duracao_curta_demais_nao_produz_velocidade():
+    escala = Escala(0.05, 25.0)
+    assert em_km_por_hora(alvo_reto(30.0, pontos=5), escala) is None
+
+
+def test_duracao_minima_de_dois_decimos_permite_velocidade():
+    escala = Escala(0.05, 25.0)
+    assert em_km_por_hora(alvo_reto(30.0, pontos=6), escala) == pytest.approx(135.0)
 
 
 @pytest.mark.parametrize('metros_por_pixel', [0.01, 0.05, 0.1, 0.3])

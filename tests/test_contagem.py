@@ -10,7 +10,7 @@ import math
 
 import pytest
 
-from contaflux.contagem import Contagem, ContadorDeLinha, Linha
+from contaflux.contagem import ContadorDeLinha, Contagem, Linha
 from contaflux.rastreio import Alvo
 
 
@@ -344,6 +344,57 @@ def test_qualquer_orientacao_de_linha_conta_uma_travessia(linha):
 def test_atualizar_sem_alvos_nao_quebra():
     contador = ContadorDeLinha(VERTICAL)
     assert contador.atualizar({}, 0).total == 0
+
+
+@pytest.mark.parametrize(
+    'antes,depois,esperado',
+    [
+        ((90, 170), (110, 250), 1),  # cruza em y=210, na folga da ponta
+        ((90, 300), (110, 180), 0),  # cruza em y=240, fora do segmento
+    ],
+)
+def test_trajetoria_obliqua_usa_intersecao_e_nao_centro_final(antes, depois, esperado):
+    contador = ContadorDeLinha(VERTICAL, quadros_minimos=1)
+    contador.atualizar({1: alvo(1, antes)}, 0)
+    contador.atualizar({1: alvo(1, depois)}, 1)
+    assert contador.contagem.total == esperado
+
+
+@pytest.mark.parametrize('x', [90, 110])
+def test_encostar_na_linha_e_voltar_nao_e_travessia(x):
+    contador = ContadorDeLinha(VERTICAL, quadros_minimos=1)
+    objeto = alvo(1, (x, 100))
+    for indice, centro in enumerate([(x, 100), (100, 100), (100, 100), (x, 100)]):
+        objeto.centro = centro
+        contador.atualizar({1: objeto}, indice)
+        assert contador.contagem.total == 0
+
+
+@pytest.mark.parametrize('x', [90, 110])
+def test_nascer_sobre_a_linha_nao_inventa_lado_de_origem(x):
+    contador = ContadorDeLinha(VERTICAL, quadros_minimos=1)
+    contador.atualizar({1: alvo(1, (100, 100))}, 0)
+    contador.atualizar({1: alvo(1, (x, 100))}, 1)
+    assert contador.contagem.total == 0
+
+
+def test_travessia_com_quadro_sobre_a_linha_espera_chegar_ao_outro_lado():
+    contador = ContadorDeLinha(VERTICAL, quadros_minimos=1)
+    objeto = alvo(1, (90, 100))
+    for indice, centro in enumerate([(90, 100), (100, 100), (110, 100)]):
+        objeto.centro = centro
+        contador.atualizar({1: objeto}, indice)
+        assert contador.contagem.total == (1 if indice == 2 else 0)
+    assert contador.contagem.eventos == [(1, 'saida', 2)]
+
+
+def test_saida_depois_de_seguir_a_linha_usa_ultimo_ponto_observado():
+    contador = ContadorDeLinha(VERTICAL, quadros_minimos=1)
+    objeto = alvo(1, (90, 100))
+    for indice, centro in enumerate([(90, 100), (100, 100), (100, 250), (110, 250)]):
+        objeto.centro = centro
+        contador.atualizar({1: objeto}, indice)
+    assert contador.contagem.total == 0
 
 
 @pytest.mark.parametrize('n', range(2, 15))

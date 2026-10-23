@@ -288,15 +288,19 @@ contaflux rodovia.mp4 --linha 0,350,1280,350     # horizontal, câmera de cima
 ```
 
 A linha é um segmento, e não uma reta infinita: veículo que passa fora do trecho
-desenhado não é contado. Isso é o que permite ignorar a pista de sentido
-contrário, colocando a linha só sobre a faixa que interessa.
+desenhado não é contado, com uma tolerância de 5% do comprimento em cada ponta.
+O cruzamento é calculado pela interseção da trajetória entre os dois centros
+observados com a linha. Encostar nela e voltar ao mesmo lado não é travessia;
+o evento só é confirmado quando o centro chega ao outro lado. Isso permite
+ignorar a pista de sentido contrário, colocando a linha sobre a faixa que
+interessa e deixando margem entre ela e as pontas do segmento.
 
 ### Vídeo grande
 
-Vídeo de celular chega em 1920 pixels de largura, e processar nessa resolução
-não melhora a contagem: os objetos são os mesmos, só com mais pixels cada. Por
-padrão o programa reduz para 960, o que mantém o resultado e devolve a fluidez.
-Para desligar, `--largura 99999`.
+Vídeo de celular pode chegar em 1920 pixels de largura. Por padrão o programa
+reduz para 960 para diminuir o custo de processamento. Objetos pequenos podem
+perder detalhes com essa redução; confira a contagem na resolução escolhida.
+Para preservar a largura original, use `--largura 99999`.
 
 ### Velocidade
 
@@ -306,11 +310,21 @@ significa que a largura do quadro cobre trinta metros de via. Sem essa opção o
 programa conta normalmente e deixa a velocidade em branco, que é melhor do que
 inventar uma escala que ninguém mediu.
 
+Essa escala é única para todo o quadro. Ela pressupõe que a conversão entre
+pixels e metros seja aproximadamente constante na região usada e que o FPS
+informado represente os intervalos entre quadros. A implementação não retifica
+perspectiva nem usa timestamps variáveis para estimar velocidade. Uma câmera
+oblíqua ou distante pode dar quilômetros por hora incorretos mesmo com uma
+contagem correta. A validação de velocidade disponível é sintética; para
+medição em campo, é necessária uma referência independente e calibração da cena.
+
 A inclinação da trajetória é estimada por Theil-Sen, a mediana das inclinações
 entre todos os pares de pontos, e não por mínimos quadrados. O motivo é o modo
 de falhar do rastreador: quando dois veículos se encostam, a caixa vira uma só e
-o centro pula. Mínimos quadrados elevam esse pulo ao quadrado e a estimativa vai
-junto; a mediana ignora enquanto o pulo for minoria.
+o centro pula. A mediana das inclinações reduz a influência de poucos saltos,
+mas um ponto corrompido participa de muitos pares; uma minoria de pontos ruins
+não garante uma estimativa correta. Essa limitação de robustez também é
+discutida na [documentação do estimador Theil-Sen](https://scikit-learn.org/stable/modules/linear_model.html#theil-sen-estimator-generalized-median-based-estimator).
 
 ## Limitações conhecidas
 
@@ -358,6 +372,9 @@ trânsito parado, isso vira contagem dobrada.
 **Validação é sintética.** Ela é exata, o que vídeo real não permite sem
 contagem manual, mas cena sintética não tem tudo que vídeo real tem: chuva,
 faróis à noite, reflexo em piso molhado, moto entrando entre dois carros.
+Os parâmetros foram ajustados nesse gerador; seus acertos não são uma medida
+independente de generalização. O [protocolo de validação](VALIDACAO.md) separa
+as verificações de software da avaliação em vídeos reais anotados.
 
 ## Estrutura
 
