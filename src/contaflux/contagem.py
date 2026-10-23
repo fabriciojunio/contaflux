@@ -89,6 +89,7 @@ class ContadorDeLinha:
         self.quadros_minimos = quadros_minimos
         self.contagem = Contagem()
         self._lado_anterior: dict[int, float] = {}
+        self._centro_anterior: dict[int, tuple[float, float]] = {}
 
     def atualizar(self, alvos: dict[int, Alvo], quadro: int = 0) -> Contagem:
         """Processa os alvos de um quadro e atualiza os totais."""
@@ -97,6 +98,12 @@ class ContadorDeLinha:
         for identificador, alvo in alvos.items():
             lado_atual = self.linha.lado(alvo.centro)
             anterior = self._lado_anterior.get(identificador)
+            centro_anterior = self._centro_anterior.get(identificador)
+            self._centro_anterior[identificador] = alvo.centro
+            # Encostar na linha não determina um novo lado. Mantém a origem
+            # até observar a saída, inclusive se o alvo parar sobre a linha.
+            if lado_atual == 0:
+                continue
             self._lado_anterior[identificador] = lado_atual
 
             if anterior is None or alvo.contado:
@@ -106,7 +113,15 @@ class ContadorDeLinha:
             # Sinais iguais significam que o objeto continua do mesmo lado.
             if (anterior > 0) == (lado_atual > 0):
                 continue
-            if not self.linha.dentro_do_segmento(alvo.centro):
+            # A trajetória pode ser oblíqua: a projeção do centro final não
+            # informa onde cruzou. Interpola a interseção entre os dois centros.
+            lado_do_centro = self.linha.lado(centro_anterior)
+            fracao = lado_do_centro / (lado_do_centro - lado_atual)
+            cruzamento = tuple(
+                antes + fracao * (depois - antes)
+                for antes, depois in zip(centro_anterior, alvo.centro)
+            )
+            if not self.linha.dentro_do_segmento(cruzamento):
                 continue
 
             alvo.contado = True
@@ -122,9 +137,13 @@ class ContadorDeLinha:
         for identificador in list(self._lado_anterior):
             if identificador not in vivos:
                 del self._lado_anterior[identificador]
+        for identificador in list(self._centro_anterior):
+            if identificador not in vivos:
+                del self._centro_anterior[identificador]
 
         return self.contagem
 
     def reiniciar(self) -> None:
         self.contagem = Contagem()
         self._lado_anterior.clear()
+        self._centro_anterior.clear()
