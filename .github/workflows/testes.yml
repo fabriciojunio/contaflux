@@ -2,9 +2,9 @@ name: testes
 
 on:
   push:
-    branches: [main]
+    branches: ["produção", "homologação"]
   pull_request:
-    branches: [main]
+    branches: ["produção", "homologação"]
 
 jobs:
   suite:

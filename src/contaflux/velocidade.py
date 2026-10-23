@@ -20,8 +20,11 @@ vai junto. A mediana ignora o pulo enquanto ele for minoria, que é o caso.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from math import isfinite
 
 from contaflux.rastreio import Alvo
+
+DURACAO_MINIMA_VELOCIDADE_S = 0.2
 
 
 @dataclass(frozen=True, slots=True)
@@ -31,29 +34,35 @@ class Escala:
     metros_por_pixel: float
     fps: float
 
+    def __post_init__(self) -> None:
+        if not isfinite(self.metros_por_pixel) or self.metros_por_pixel <= 0:
+            raise ValueError('A escala em metros por pixel precisa ser positiva e finita.')
+        if not isfinite(self.fps) or self.fps <= 0:
+            raise ValueError('A taxa de quadros precisa ser positiva e finita.')
+
     @classmethod
-    def de_largura(cls, largura_quadro: int, metros_visiveis: float, fps: float) -> 'Escala':
+    def de_largura(cls, largura_quadro: int, metros_visiveis: float, fps: float) -> Escala:
         """Escala a partir de quantos metros de pista cabem na largura da imagem.
 
         É a forma mais fácil de calibrar em campo: mede-se com trena um trecho
         que atravessa o quadro inteiro, ou usa-se a distância entre dois postes.
         """
-        if largura_quadro <= 0:
+        if not isfinite(largura_quadro) or largura_quadro <= 0:
             raise ValueError('A largura do quadro precisa ser positiva.')
-        if metros_visiveis <= 0:
+        if not isfinite(metros_visiveis) or metros_visiveis <= 0:
             raise ValueError('O trecho visível precisa ser positivo.')
-        if fps <= 0:
+        if not isfinite(fps) or fps <= 0:
             raise ValueError('A taxa de quadros precisa ser positiva.')
         return cls(metros_visiveis / largura_quadro, fps)
 
     @classmethod
-    def de_trecho(cls, pixels: float, metros: float, fps: float) -> 'Escala':
+    def de_trecho(cls, pixels: float, metros: float, fps: float) -> Escala:
         """Escala a partir de um trecho conhecido medido em pixels na imagem."""
-        if pixels <= 0:
+        if not isfinite(pixels) or pixels <= 0:
             raise ValueError('O trecho em pixels precisa ser positivo.')
-        if metros <= 0:
+        if not isfinite(metros) or metros <= 0:
             raise ValueError('O trecho em metros precisa ser positivo.')
-        if fps <= 0:
+        if not isfinite(fps) or fps <= 0:
             raise ValueError('A taxa de quadros precisa ser positiva.')
         return cls(metros / pixels, fps)
 
@@ -97,7 +106,16 @@ def pixels_por_quadro(alvo: Alvo, minimo_de_pontos: int = 5) -> float | None:
 
 
 def em_km_por_hora(alvo: Alvo, escala: Escala, minimo_de_pontos: int = 5) -> float | None:
-    """Velocidade do alvo em quilômetros por hora."""
+    """Velocidade em km/h, se houver amostra longa o bastante para medi-la.
+
+    Além da quantidade de observações, exige pelo menos 0,2 s entre a primeira
+    e a última. Cinco quadros a 25 FPS cobrem só 0,16 s e deixam a medida
+    excessivamente sensível à localização da caixa no instante de cruzamento.
+    """
+    if len(alvo.indices) < minimo_de_pontos or len(alvo.indices) != len(alvo.trajetoria):
+        return None
+    if (max(alvo.indices) - min(alvo.indices)) / escala.fps < DURACAO_MINIMA_VELOCIDADE_S:
+        return None
     rapidez = pixels_por_quadro(alvo, minimo_de_pontos)
     if rapidez is None:
         return None

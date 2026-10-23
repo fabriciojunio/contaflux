@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import sys
 from dataclasses import dataclass, replace
+from math import isfinite
 from pathlib import Path
 
 import cv2
@@ -24,13 +25,13 @@ from contaflux import __version__
 from contaflux.cena import GeradorDeCena, ParametrosCena, veiculos_regulares
 from contaflux.contagem import Linha
 from contaflux.desenho import anotar, lado_a_lado
+from contaflux.deteccao_yolo import DetectorYolo, UltralyticsIndisponivel
 from contaflux.menu import escolher_video
 from contaflux.perfis import PERFIS, obter
-from contaflux.porte import FaixasDePorte
 from contaflux.pipeline import ContadorDeFluxo
+from contaflux.porte import FaixasDePorte
 from contaflux.relatorio import Relatorio
 from contaflux.selecao import escolher_linha, listar_videos, primeiro_quadro_util
-from contaflux.deteccao_yolo import DetectorYolo, UltralyticsIndisponivel
 from contaflux.sugestao import sugerir_linha
 from contaflux.velocidade import Escala
 from contaflux.video import FonteDeVideo, FonteIndisponivel
@@ -99,7 +100,7 @@ def preparar_console() -> None:
 
         ctypes.windll.kernel32.SetConsoleOutputCP(65001)
         ctypes.windll.kernel32.SetConsoleCP(65001)
-    except Exception:
+    except (AttributeError, OSError):
         pass
 
     for fluxo in (sys.stdin, sys.stdout, sys.stderr):
@@ -140,6 +141,16 @@ def pasta_para_menu_automatico(argumentos: argparse.Namespace) -> str | None:
 
     pasta = pasta_ao_lado_do_executavel(argumentos.pasta)
     return pasta if listar_videos(pasta) else None
+
+
+def metros_positivos(texto: str) -> float:
+    try:
+        valor = float(texto)
+    except ValueError as erro:
+        raise argparse.ArgumentTypeError('metros deve ser um número positivo e finito') from erro
+    if not isfinite(valor) or valor <= 0:
+        raise argparse.ArgumentTypeError('metros deve ser um número positivo e finito')
+    return valor
 
 
 def construir_parser() -> argparse.ArgumentParser:
@@ -204,7 +215,7 @@ def construir_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         '--metros',
-        type=float,
+        type=metros_positivos,
         help='quantos metros de via cabem na largura do quadro; liga a velocidade',
     )
     parser.add_argument('--csv', help='grava as passagens em CSV')
@@ -420,10 +431,10 @@ def montar_detector(escolha: str, perfil, saida=sys.stdout, sintetica: bool = Fa
 
     try:
         detector = DetectorYolo()
-    except UltralyticsIndisponivel as erro:
+    except UltralyticsIndisponivel:
         if escolha == 'yolo':
             raise
-        print(f'Detecção por reconhecimento indisponível, usando movimento.', file=saida)
+        print('Detecção por reconhecimento indisponível, usando movimento.', file=saida)
         return None
 
     if sintetica:
@@ -635,7 +646,7 @@ def executar(argumentos, saida=sys.stdout) -> Relatorio:
 
     relatorio = contador.relatorio(rotulo)
 
-    print('', file=saida)
+    print(file=saida)
     print(relatorio.resumo(), file=saida)
     if esperado is not None:
         acerto = 'exato' if relatorio.total == esperado else f'esperado {esperado}'
