@@ -9,6 +9,11 @@ quantos veículos passam, e o número esperado sai das trajetórias, não da
 quantidade criada. Quem entra tarde demais e não chega à linha antes de o vídeo
 acabar não entra na conta.
 
+Os acertos abaixo são resultados históricos de ajuste. Os parâmetros foram
+escolhidos usando esse gerador, também presente na suíte de regressão. Eles
+comprovam os casos sintéticos declarados, mas não estimam desempenho em vídeos
+reais independentes. Para essa avaliação, siga o [protocolo](VALIDACAO.md).
+
 ## O ponto de partida
 
 A primeira versão usou `varThreshold = 40`, na ordem de grandeza sugerida pela
@@ -59,8 +64,8 @@ Vinte cenas, incluindo cena vazia e cena com o triplo do ruído.
 | 3 | **10/10** |
 | 2 | 10/10 |
 
-Escolhido **3**, o maior valor que fecha tudo. Maior é melhor aqui: sobra
-margem para vídeo real, que tem mais variação que cena sintética.
+Escolhido **3**, o maior valor que fecha tudo nessa varredura. Esse critério de
+ajuste não demonstra que haja margem suficiente para vídeo real.
 
 A cena vazia e a cena de ruído triplicado estão na varredura exatamente para
 responder à objeção óbvia, que é o limiar baixo passar a contar ruído. As duas
